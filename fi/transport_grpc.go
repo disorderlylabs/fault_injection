@@ -8,11 +8,11 @@ import (
 	stdopentracing "github.com/opentracing/opentracing-go"
 	"golang.org/x/net/context"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/tracing/opentracing"
+	"github.com/go-kit/kit/log"	
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	
 	"fault_injection/pb"
+	"fault_injection/ot_glue"
 )
 
 // MakeGRPCServer makes a set of endpoints available as a gRPC AddServer.
@@ -26,14 +26,14 @@ func MakeGRPCServer(ctx context.Context, endpoints Endpoints, tracer stdopentrac
 			endpoints.SumEndpoint,
 			DecodeGRPCSumRequest,
 			EncodeGRPCSumResponse,
-			append(options, grpctransport.ServerBefore(opentracing.FromGRPCRequest(tracer, "Sum", logger)))...,
+			append(options, grpctransport.ServerBefore(ot_glue.FromGRPCRequest(tracer, "Sum", logger)))...,
 		),
 		concat: grpctransport.NewServer(
 			ctx,
 			endpoints.ConcatEndpoint,
 			DecodeGRPCConcatRequest,
 			EncodeGRPCConcatResponse,
-			append(options, grpctransport.ServerBefore(opentracing.FromGRPCRequest(tracer, "Concat", logger)))...,
+			append(options, grpctransport.ServerBefore(ot_glue.FromGRPCRequest(tracer, "Concat", logger)))...,
 		),
 	}
 }

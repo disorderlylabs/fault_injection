@@ -15,10 +15,11 @@ import (
 	
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/endpoint"
-	"github.com/go-kit/kit/tracing/opentracing"
+	
 		
 	"fault_injection/fi"
 	"fault_injection/pb"
+	"fault_injection/ot_glue"
 	"fault_injection/dapperish"
 )
 
@@ -54,12 +55,12 @@ func main() {
 	var sumEndpoint endpoint.Endpoint
 	{
 		sumEndpoint = fi.MakeSumEndpoint(service)
-		sumEndpoint = opentracing.TraceServer(tracer, "Sum")(sumEndpoint)
+		sumEndpoint = ot_glue.TraceServer(tracer, "Sum")(sumEndpoint)
 	}
 	var concatEndpoint endpoint.Endpoint
 	{
 		concatEndpoint = fi.MakeConcatEndpoint(service)
-		concatEndpoint = opentracing.TraceServer(tracer, "Concat")(concatEndpoint)
+		concatEndpoint = ot_glue.TraceServer(tracer, "Concat")(concatEndpoint)
 	}
 	
 	

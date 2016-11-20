@@ -14,11 +14,12 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/ratelimit"
 	"github.com/go-kit/kit/circuitbreaker"
-	"github.com/go-kit/kit/tracing/opentracing"		
+			
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	
 	"fault_injection/fi"
 	"fault_injection/pb"
+	"fault_injection/ot_glue"
 )
 
 // New returns an AddService backed by a gRPC client connection. It is the
@@ -41,9 +42,9 @@ func New(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger log.Logger)
 			fi.EncodeGRPCSumRequest,
 			fi.DecodeGRPCSumResponse,
 			pb.SumReply{},
-			grpctransport.ClientBefore(opentracing.ToGRPCRequest(tracer, logger)),
+			grpctransport.ClientBefore(ot_glue.ToGRPCRequest(tracer, logger)),
 		).Endpoint()
-		sumEndpoint = opentracing.TraceClient(tracer, "Sum")(sumEndpoint)
+		sumEndpoint = ot_glue.TraceClient(tracer, "Sum")(sumEndpoint)
 		sumEndpoint = limiter(sumEndpoint)
 		sumEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
 			Name:    "Sum",
@@ -60,9 +61,9 @@ func New(conn *grpc.ClientConn, tracer stdopentracing.Tracer, logger log.Logger)
 			fi.EncodeGRPCConcatRequest,
 			fi.DecodeGRPCConcatResponse,
 			pb.ConcatReply{},
-			grpctransport.ClientBefore(opentracing.ToGRPCRequest(tracer, logger)),
+			grpctransport.ClientBefore(ot_glue.ToGRPCRequest(tracer, logger)),
 		).Endpoint()
-		concatEndpoint = opentracing.TraceClient(tracer, "Concat")(concatEndpoint)
+		concatEndpoint = ot_glue.TraceClient(tracer, "Concat")(concatEndpoint)
 		concatEndpoint = limiter(concatEndpoint)
 		concatEndpoint = circuitbreaker.Gobreaker(gobreaker.NewCircuitBreaker(gobreaker.Settings{
 			Name:    "Concat",
