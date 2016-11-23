@@ -34,7 +34,7 @@ func service1(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	if _, err := http.DefaultClient.Do(svc2_req); err != nil {
-			log.Printf("%s: Async call failed (%v)", r.URL.Path, err)
+			log.Printf("%s: service_2 call failed (%v)", r.URL.Path, err)
 	}
 	
 	
@@ -47,7 +47,7 @@ func service1(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	if _, err := http.DefaultClient.Do(svc3_req); err != nil {
-			log.Printf("%s: Async call failed (%v)", r.URL.Path, err)
+			log.Printf("%s: service_3 call failed (%v)", r.URL.Path, err)
 	}
 	fmt.Println()
 }//end service1
@@ -63,7 +63,7 @@ func service2(w http.ResponseWriter, r *http.Request) {
 		sp = opentracing.StartSpan("SERVICE_2")
 	}	
 	sp.LogKV("hello_from", "service_2")
-	sp.LogFields(otlog.String("service_2 status", "ok"))
+	sp.LogFields(otlog.String("service_2_status", "ok"))
 	sp.Finish()
 	fmt.Println()
 }
@@ -82,7 +82,7 @@ func service3(w http.ResponseWriter, r *http.Request) {
 	defer sp.Finish()
 	
 	sp.LogKV("hello_from", "service_3")
-	sp.LogFields(otlog.String("service_2 status", "ok"))
+	sp.LogFields(otlog.String("service_3_status", "ok"))
 	
 	sp.SetBaggageItem("svc3_msg", "hello_from_svc3")
 	sp.SetBaggageItem("svc3_svcs_invoked", "4")
@@ -95,7 +95,7 @@ func service3(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	if _, err := http.DefaultClient.Do(svc4_req); err != nil {
-			log.Printf("%s: Async call failed (%v)", r.URL.Path, err)
+			log.Printf("%s: service_4 call failed (%v)", r.URL.Path, err)
 	}	
 	fmt.Println()
 }
@@ -111,7 +111,7 @@ func service4(w http.ResponseWriter, r *http.Request) {
 		sp = opentracing.StartSpan("SERVICE_4")
 	}	
 	sp.LogKV("hello_from", "service_4")
-	sp.LogFields(otlog.String("service_4 status", "ok"))
+	sp.LogFields(otlog.String("service_4_status", "ok"))
 	sp.Finish()
 	fmt.Println()
 }
