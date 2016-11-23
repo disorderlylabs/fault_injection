@@ -1,16 +1,16 @@
 kohdmonkey@ubuntu:~/projects/go/src/fault_injection/example/tracing example$ go run main.go   
 Listening on port: 8080  
-RecordSpan: SERVICE_2[2016-11-22 19:19:11.144400893 -0800 PST, 14.687µs us] --> 2 logs. context: {848317902198031208 7546184755318935372 false map[svc1_svcs_invoked:2|3 svc1_msg:hello_from_svc1]}; baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]  
-    log 0 @ 2016-11-22 19:19:11.144413863 -0800 PST: [hello_from:service_2]  
-    log 1 @ 2016-11-22 19:19:11.14441484 -0800 PST: [service_2 status:ok]  
+RecordSpan: SERVICE_2[2016-11-22 19:42:01.302923059 -0800 PST, 9.525µs us] --> 2 logs. context: {3367232266900047727 355635434401727133 false map[svc1_svcs_invoked:2|3 svc1_msg:hello_from_svc1]}; baggage: map[svc1_svcs_invoked:2|3 svc1_msg:hello_from_svc1]  
+    log 0 @ 2016-11-22 19:42:01.3029313 -0800 PST: [hello_from:service_2]  
+    log 1 @ 2016-11-22 19:42:01.302932053 -0800 PST: [service_2_status:ok]  
 
-RecordSpan: SERVICE_4[2016-11-22 19:19:11.145356979 -0800 PST, 12.065µs us] --> 2 logs. context: {848317902198031208 6796176404690813896 false map[svc3_svcs_invoked:4 svc3_msg:hello_from_svc3 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]}; baggage: map[svc3_msg:hello_from_svc3 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3 svc3_svcs_invoked:4]  
-    log 0 @ 2016-11-22 19:19:11.145368129 -0800 PST: [hello_from:service_4]  
-    log 1 @ 2016-11-22 19:19:11.145368684 -0800 PST: [service_4 status:ok]  
+RecordSpan: SERVICE_4[2016-11-22 19:42:01.303315256 -0800 PST, 7.233µs us] --> 2 logs. context: {3367232266900047727 8430373670221666879 false map[svc1_svcs_invoked:2|3 svc3_svcs_invoked:4 svc1_msg:hello_from_svc1 svc3_msg:hello_from_svc3]}; baggage: map[svc3_msg:hello_from_svc3 svc1_svcs_invoked:2|3 svc3_svcs_invoked:4 svc1_msg:hello_from_svc1]  
+    log 0 @ 2016-11-22 19:42:01.303321515 -0800 PST: [hello_from:service_4]  
+    log 1 @ 2016-11-22 19:42:01.303322026 -0800 PST: [service_4_status:ok]  
 
 
-RecordSpan: SERVICE_3[2016-11-22 19:19:11.145175413 -0800 PST, 729.872µs us] --> 2 logs. context: {848317902198031208 1375730519306291470 false map[svc1_svcs_invoked:2|3 svc1_msg:hello_from_svc1 svc3_msg:hello_from_svc3 svc3_svcs_invoked:4]}; baggage: map[svc1_svcs_invoked:2|3 svc1_msg:hello_from_svc1 svc3_msg:hello_from_svc3 svc3_svcs_invoked:4]  
-    log 0 @ 2016-11-22 19:19:11.145177583 -0800 PST: [hello_from:service_3]  
-    log 1 @ 2016-11-22 19:19:11.14517816 -0800 PST: [service_2 status:ok]  
+RecordSpan: SERVICE_3[2016-11-22 19:42:01.30312489 -0800 PST, 257.855µs us] --> 2 logs. context: {3367232266900047727 294376350868220336 false map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3 svc3_msg:hello_from_svc3 svc3_svcs_invoked:4]}; baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3 svc3_msg:hello_from_svc3 svc3_svcs_invoked:4]  
+    log 0 @ 2016-11-22 19:42:01.303126898 -0800 PST: [hello_from:service_3]  
+    log 1 @ 2016-11-22 19:42:01.303131618 -0800 PST: [service_3_status:ok]  
 
-RecordSpan: SERVICE_1[2016-11-22 19:19:11.143764768 -0800 PST, 2.612648ms us] --> 0 logs. context: {848317902198031208 579689357239570208 false map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]}; baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]  
+RecordSpan: SERVICE_1[2016-11-22 19:42:01.302499023 -0800 PST, 930.39µs us] --> 0 logs. context: {3367232266900047727 7248225688967084854 false map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]}; baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]  
