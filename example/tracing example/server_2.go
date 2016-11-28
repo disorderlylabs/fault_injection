@@ -110,6 +110,9 @@ func service4(w http.ResponseWriter, r *http.Request) {
 	} else {
 		sp = opentracing.StartSpan("SERVICE_4")
 	}	
+	testvar := 4
+	fmt.Fprintf(w, "test_var is: %d\n", testvar)
+	
 	sp.LogKV("hello_from", "service_4")
 	sp.LogFields(otlog.String("service_4_status", "ok"))
 	sp.Finish()
@@ -125,14 +128,13 @@ func service4(w http.ResponseWriter, r *http.Request) {
 func main() {
 	
 	var tracer opentracing.Tracer
-	var port = flag.Int("port", 8080, "Example app port.")
+	var port = flag.Int("port", 8081, "Example app port.")
 
 	tracer = basictracer.New(dapperish.NewTrivialRecorder("fi"))
 	opentracing.InitGlobalTracer(tracer)
 
 	addr := fmt.Sprintf(":%d", *port)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc("/svc1", service1)
 	mux.HandleFunc("/svc2", service2)
 	mux.HandleFunc("/svc3", service3)
@@ -140,17 +142,5 @@ func main() {
 	
 	fmt.Printf("Listening on port: %d\n", *port)	
 	log.Fatal(http.ListenAndServe(addr, mux))
-	
-	var sp opentracing.Span
-	req, _ := http.NewRequest("GET", "http://localhost:8080/svc4", nil)
-	
-	err := sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(req.Header))
-	if err != nil {
-		fmt.Printf("fail")
-	}
-	
-	if _, err := http.DefaultClient.Do(req); err != nil {
-			fmt.Printf("fail")
-	}
 	
 }
