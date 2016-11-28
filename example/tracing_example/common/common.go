@@ -42,6 +42,9 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		name := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 		name = strings.Split(name, ".")[1]
 		fmt.Println("Name of function : " + name)
+		
+		
+		
         f(w, r) // call function here
     }
 }

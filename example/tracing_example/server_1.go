@@ -16,7 +16,9 @@ import (
 
 
 func service1(w http.ResponseWriter, r *http.Request) {
-	span := opentracing.StartSpan("SERVICE_1")
+	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
+		opentracing.HTTPHeadersCarrier(r.Header))
+	span := common.Check_and_start_span(err, "SERVICE_1", spCtx)	
 	defer span.Finish()
 	
 	span.SetBaggageItem("svc1_msg", "hello_from_svc1")
@@ -26,7 +28,7 @@ func service1(w http.ResponseWriter, r *http.Request) {
 	svc2_req, _ := http.NewRequest("GET", "http://localhost:8080/svc2", nil)
 	
 	// Inject the trace information into the HTTP Headers.
-	err := span.Tracer().Inject(span.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc2_req.Header))
+	err = span.Tracer().Inject(span.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc2_req.Header))
 	common.Check_inject_error(err, r)
 	
 	_, err = http.DefaultClient.Do(svc2_req)

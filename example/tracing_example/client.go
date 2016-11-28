@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"flag"
 	"strconv"
@@ -12,30 +13,45 @@ import (
 )
 
 func main() {
-		
+	
 	var (
+		sp opentracing.Span
 		tracer opentracing.Tracer
-		serviceName = flag.String("service", "service1", "service targeted for fault injection")
-		faultType = flag.String("inject", "", "delay_ms, dropped_package")		
+		//injectFault bool = false
+		serviceName = flag.String("serviceName", "", "service targeted for fault injection")
+		faultType = flag.String("faultType", "", "delay_ms, drop_packet")		
 	)
 	
-	
-	
-	switch *faultType {
-		case "delay":
-		time, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
-		fmt.Printf("Inject delay of %d to service %s\n", time, serviceName)
-		
-	}
-
+	//initialize tracer
 	tracer = basictracer.New(dapperish.NewTrivialRecorder("fi"))
 	opentracing.InitGlobalTracer(tracer)
-
-	var sp opentracing.Span
+	
+	//start a new span
 	sp = opentracing.StartSpan("test_client")
 	defer sp.Finish()
 	
+	//parse the commandline arguments
+	flag.Parse()
+	
+	if *serviceName != "" {
+		switch *faultType {
+			case "delay_ms":
+				time, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
+				fmt.Printf("Fault type: delay of %d ms to service %s\n", time, *serviceName)	
+			    sp.SetBaggageItem("InjectFault", (*serviceName + "_delay:" + flag.Args()[0]))
+			case "drop_packet":
+				fmt.Printf("Fault type: dropping packet going to service %s\n", *serviceName)	
+				sp.SetBaggageItem("InjectFault", (*serviceName + "_drop"))
+			default:
+				fmt.Fprintf(os.Stderr, "error: must specify fault type for the service\n")
+				os.Exit(1)
+		}		
+	}	
+	
 	req, _ := http.NewRequest("GET", "http://localhost:8080/svc1", nil)
+	
+	//q := req.URL.Query()
+	//q.Add("api_key", "key_from_environment_or_flag")
 	
 	err := sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(req.Header))
 	if err != nil {
