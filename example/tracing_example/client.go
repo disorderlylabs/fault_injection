@@ -45,6 +45,8 @@ func main() {
 			default:
 				fmt.Fprintf(os.Stderr, "error: must specify fault type for the service\n")
 				os.Exit(1)
+			
+			//*Note: baggage keys are converted into lower case, so look up "injectfault" not "InjectFault"
 		}		
 	}	
 	

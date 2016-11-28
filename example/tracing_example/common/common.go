@@ -43,7 +43,15 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		name = strings.Split(name, ".")[1]
 		fmt.Println("Name of function : " + name)
 		
+		//test handling fault
+		spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
+		opentracing.HTTPHeadersCarrier(r.Header))
+		sp := Check_and_start_span(err, "fault_injection", spCtx)
 		
+		faultRequest := sp.BaggageItem("injectfault")
+		fmt.Printf("Injecting fault: %s\n", faultRequest)
+		
+		sp.Finish()
 		
         f(w, r) // call function here
     }
