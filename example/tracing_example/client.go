@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"flag"
+	"strconv"
 	"net/http"
 	"io/ioutil"
 	"fault_injection/dapperish"
@@ -10,8 +12,21 @@ import (
 )
 
 func main() {
+		
+	var (
+		tracer opentracing.Tracer
+		serviceName = flag.String("service", "service1", "service targeted for fault injection")
+		faultType = flag.String("inject", "", "delay_ms, dropped_package")		
+	)
 	
-	var tracer opentracing.Tracer
+	
+	
+	switch *faultType {
+		case "delay":
+		time, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
+		fmt.Printf("Inject delay of %d to service %s\n", time, serviceName)
+		
+	}
 
 	tracer = basictracer.New(dapperish.NewTrivialRecorder("fi"))
 	opentracing.InitGlobalTracer(tracer)

@@ -108,9 +108,9 @@ func main() {
 
 	addr := fmt.Sprintf(":%d", *port)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/svc1", service1)
-	mux.HandleFunc("/svc2", service2)
-	mux.HandleFunc("/svc3", service3)
+	mux.HandleFunc("/svc1", common.Handler_decorator(service1))
+	mux.HandleFunc("/svc2", common.Handler_decorator(service2))
+	mux.HandleFunc("/svc3", common.Handler_decorator(service3))
 	
 	fmt.Printf("Listening on port: %d\n", *port)	
 	log.Fatal(http.ListenAndServe(addr, mux))	

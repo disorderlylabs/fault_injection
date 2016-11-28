@@ -179,12 +179,12 @@ func main() {
 
 	addr := fmt.Sprintf(":%d", *port)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/svc4", service4)
-	mux.HandleFunc("/svc5", service5)
-	mux.HandleFunc("/svc6", service6)
-	mux.HandleFunc("/svc7", service7)	
-	mux.HandleFunc("/svc8", service8)
-	mux.HandleFunc("/svc9", service9)
+	mux.HandleFunc("/svc4", common.Handler_decorator(service4))
+	mux.HandleFunc("/svc5", common.Handler_decorator(service5))
+	mux.HandleFunc("/svc6", common.Handler_decorator(service6))
+	mux.HandleFunc("/svc7", common.Handler_decorator(service7))	
+	mux.HandleFunc("/svc8", common.Handler_decorator(service8))
+	mux.HandleFunc("/svc9", common.Handler_decorator(service9))
 	
 	fmt.Printf("Listening on port: %d\n", *port)	
 	log.Fatal(http.ListenAndServe(addr, mux))
