@@ -140,4 +140,17 @@ func main() {
 	
 	fmt.Printf("Listening on port: %d\n", *port)	
 	log.Fatal(http.ListenAndServe(addr, mux))
+	
+	var sp opentracing.Span
+	req, _ := http.NewRequest("GET", "http://localhost:8080/svc4", nil)
+	
+	err := sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(req.Header))
+	if err != nil {
+		fmt.Printf("fail")
+	}
+	
+	if _, err := http.DefaultClient.Do(req); err != nil {
+			fmt.Printf("fail")
+	}
+	
 }
