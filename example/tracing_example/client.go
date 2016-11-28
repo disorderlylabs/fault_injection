@@ -20,7 +20,7 @@ func main() {
 	sp = opentracing.StartSpan("test_client")
 	defer sp.Finish()
 	
-	req, _ := http.NewRequest("GET", "http://localhost:8081/svc4", nil)
+	req, _ := http.NewRequest("GET", "http://localhost:8080/svc1", nil)
 	
 	err := sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(req.Header))
 	if err != nil {
