@@ -12,14 +12,17 @@ on your web browser, type: "localhost:8080/" and click on the link
 
 
 Call graph:  
------------  
-                              SERVICE1  
-							/          \  
-						SERVICE2    SERVICE3  
-										|  
-								    SERVICE4  
-									
-					
+-----------    
+         SERVICE1 ----------------------------------  
+		/       |                                   \  
+	   /        |       							|  
+    SERVICE2   SERVICE3  					     SERVICE4 ----  
+	                                            /      |       \      
+									           /       |        \  
+					                      SERVICE5  SERVICE6  SERVICE7  
+										  			/      \  
+												   /        \  
+										  	   SERVICE8  SERVICE9  
 					
 					
 					
