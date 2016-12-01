@@ -45,7 +45,7 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		//get the name of the handler function
 		name := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 		name = strings.Split(name, ".")[1]
-		fmt.Println("Name of function : " + name)
+		//fmt.Println("Name of function : " + name)
 		
 		//construct the span to check for faults
 		spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
@@ -54,14 +54,14 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		
 		//if there was a baggage item that signals a fault injection, extract it
 		faultRequest := sp.BaggageItem("injectfault") 
-		if faultRequest != "" {
+		if (faultRequest != "" && strings.Contains(faultRequest, name)) {
 			//here, example of faultRequest would be "service4_delay:10" or "service1_drop"
 			strArr := strings.Split(faultRequest, "_")
 			serviceName := strArr[0]
 			faultType := strArr[1]
 			
-			fmt.Println("Service name: " + serviceName)
-			fmt.Println("fault type: " + faultType)
+			//fmt.Println("Service name: " + serviceName)
+			//fmt.Println("fault type: " + faultType)
 			
 			if strings.Compare(faultType, "drop") == 0 {
 				//if we requested to drop the packet, do nothing and return
