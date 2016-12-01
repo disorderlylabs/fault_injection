@@ -17,7 +17,6 @@ func main() {
 	var (
 		sp opentracing.Span
 		tracer opentracing.Tracer
-		//injectFault bool = false
 		serviceName = flag.String("serviceName", "", "service targeted for fault injection")
 		faultType = flag.String("faultType", "", "delay_ms, drop_packet")		
 	)

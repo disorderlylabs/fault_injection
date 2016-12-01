@@ -1,0 +1,15 @@
+kohdmonkey@ubuntu:~/projects/go/src/fault_injection/http$ go run server_1.go   
+Listening on port: 8080  
+
+RecordSpan: SERVICE_2[2016-11-30 22:03:27.886194047 -0800 PST, 16.059µs us] --> 2 logs. context: {8896074034692317173 6070906781410314912 false map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 injectfault:service4_delay:20]}; baggage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]  
+    log 0 @ 2016-11-30 22:03:27.886203094 -0800 PST: [hello_from:service_2]  
+    log 1 @ 2016-11-30 22:03:27.886203886 -0800 PST: [service_2_status:ok]  
+RecordSpan: fault_injection[2016-11-30 22:03:27.886186168 -0800 PST, 108.332µs us] --> 0 logs. context: {8896074034692317173 1634908554002694526 false map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]}; baggage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]  
+
+RecordSpan: SERVICE_3[2016-11-30 22:03:27.886426918 -0800 PST, 12.755µs us] --> 2 logs. context: {8896074034692317173 6788580738474847213 false map[svc1_msg:hello_from_svc1 svc3_svcs_invoked:4 svc1_svcs_invoked:2|3|4 svc3_msg:hello_from_svc3 injectfault:service4_delay:20]}; baggage: map[svc3_msg:hello_from_svc3 injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc3_svcs_invoked:4 svc1_svcs_invoked:2|3|4]  
+    log 0 @ 2016-11-30 22:03:27.886429598 -0800 PST: [hello_from:service_3]  
+    log 1 @ 2016-11-30 22:03:27.886430068 -0800 PST: [service_3_status:ok]  
+RecordSpan: fault_injection[2016-11-30 22:03:27.886419937 -0800 PST, 45.533µs us] --> 0 logs. context: {8896074034692317173 7158526749663597900 false map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 injectfault:service4_delay:20]}; baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 injectfault:service4_delay:20]  
+
+RecordSpan: SERVICE_1[2016-11-30 22:03:27.88583075 -0800 PST, 24.059733ms us] --> 0 logs. context: {8896074034692317173 4903097090983558430 false map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]}; baggage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]  
+RecordSpan: fault_injection[2016-11-30 22:03:27.885819995 -0800 PST, 24.097484ms us] --> 0 logs. context: {8896074034692317173 3274984302471485426 false map[injectfault:service4_delay:20]}; baggage: map[injectfault:service4_delay:20]  

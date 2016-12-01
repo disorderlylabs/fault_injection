@@ -1,14 +1,41 @@
-This is an example borrowed from [https://github.com/bg451/opentracing-example]    
+This is an example built on [https://github.com/bg451/opentracing-example]    
 
-modified to provide spans baggage annotations along with change in service calls.  
+The code consists of a client and two servers.  
+
+client: Will trigger the call graph starting with service1, and have the option to  
+        inject failure into a particular service. Client can be modified to call on  
+		any service, but a call to service1 will trigger the full call graph  
+		
+server1: consists of service[1,2,3]  
+
+server2: consists of service[4,5,6,7,8,9]  
+
 
 Running the example  
 -------------------
-$go run main.go  
+The following should be run on separate shells  
 
-this should output a port number which the server will listen on  
+## Running server1   
+$go run server_1.go  
 
-on your web browser, type: "localhost:8080/" and click on the link   
+## Running server2  
+$go run server_2.go  
+
+## Running client  
+### Just tracing
+$go run client.go       
+
+### drop packet going to service3  
+$go run client.go -serviceName=service3 -faultType=drop_packet  
+
+### inject a 500millisecond delay on request going to service 9   
+$go run client.go -serviceName=service9 -faultType=delay_ms 500  
+
+### inject a 404 (not found) error for the http request going to service 5  
+$go run client.go -serviceName=service5 -faultType=http_error 404  
+
+if there are any errors regarding missing packages, run the following then try again  
+$go get ./...  
 
 
 Call graph:  
@@ -26,18 +53,7 @@ Call graph:
 					
 					
 					
-Tracing baggage passed:   
------------------------  
--to test span baggage annotation, some example baggage items were passed.  
-
-[SVC1] ->  [SVC2 & SVC3]   
-   1) hello message    
-   2) services invoked by SVC1  
-
-[SVC3] ->  [SVC4]  
-   same as baggage items as SVC1   
-   
-   
+  
 Understanding the traces:   
 -------------------------  
 
@@ -51,7 +67,7 @@ The lines that contain "log" are local to that service's span only, and does not
 "log 0 @ 2016-11-22 19:13:23.243521411 -0800 PST: [hello_from:service_3]"  
 
 baggage: this is what's been passed from a parent span to a child  
-"baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3]"  
+"baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]"  
 
 
 

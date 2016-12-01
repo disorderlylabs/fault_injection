@@ -1,0 +1,60 @@
+kohdmonkey@ubuntu:~/projects/go/src/fault_injection/http$ go run server_2.go 
+Listening on port: 8081  
+
+RecordSpan: SERVICE_5[2016-11-30 22:05:41.042075945 -0800 PST, 9.023µs us] --> 1 logs. context: {1409870975818840214 3881681079559374426 false map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_msg:hello_from_svc4 svc4_svcs_invoked:5|6|7]}; baggage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_msg:hello
+_from_svc4 svc4_svcs_invoked:5|6|7]    
+    log 0 @ 2016-11-30 22:05:41.042077679 -0800 PST: [service_5_status:ok]  
+RecordSpan: fault_injection[2016-11-30 22:05:41.042067024 -0800 PST, 109.392µs us] --> 0 logs. context: {1409870975818840214 2922290845976137891 false map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc4_svcs_invoked:5|6|7 svc1_svcs_invoked:2|3|4 svc4_msg:hello_from_svc4]}; baggage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc4_svcs_invoked:5|6|7 svc1_s
+vcs_invoked:2|3|4 svc4_msg:hello_from_svc4]  
+
+RecordSpan: SERVICE_8[2016-11-30 22:05:41.042497911 -0800 PST, 4.491µs us] --> 1 logs. context: {1409870975818840214 2386073025738786913 false map[svc4_svcs_invoked:5|6|7 injectfault:service4_
+delay:20 svc4_msg:hello_from_svc4 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]}; baggage: m
+ap[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_svcs_invoked:5|6|7 injectfault:service4
+_delay:20 svc4_msg:hello_from_svc4]  
+    log 0 @ 2016-11-30 22:05:41.042499226 -0800 PST: [service_8_status:ok]  
+RecordSpan: fault_injection[2016-11-30 22:05:41.042489402 -0800 PST, 37.537µs us] --> 0 logs. co
+ntext: {1409870975818840214 6304879566749224910 false map[injectfault:service4_delay:20 svc4_msg
+:hello_from_svc4 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_svcs_invoked:5|6|7]}; bag
+gage: map[svc1_svcs_invoked:2|3|4 svc4_svcs_invoked:5|6|7 injectfault:service4_delay:20 svc4_msg
+:hello_from_svc4 svc1_msg:hello_from_svc1]  
+
+RecordSpan: SERVICE_9[2016-11-30 22:05:41.042646934 -0800 PST, 4.812µs us] --> 1 logs. context: 
+{1409870975818840214 6719829307834840004 false map[svc4_msg:hello_from_svc4 injectfault:service4
+_delay:20 svc4_svcs_invoked:5|6|7 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]}; baggage: m
+ap[svc4_msg:hello_from_svc4 injectfault:service4_delay:20 svc4_svcs_invoked:5|6|7 svc1_msg:hello
+_from_svc1 svc1_svcs_invoked:2|3|4]  
+    log 0 @ 2016-11-30 22:05:41.042648373 -0800 PST: [service_9_status:ok]  
+
+RecordSpan: SERVICE_6[2016-11-30 22:05:41.042317018 -0800 PST, 392.78µs us] --> 1 logs. context:
+ {1409870975818840214 919040549699152560 false map[svc4_svcs_invoked:5|6|7 injectfault:service4_
+delay:20 svc1_msg:hello_from_svc1 svc4_msg:hello_from_svc4 svc1_svcs_invoked:2|3|4]}; baggage: m
+ap[svc4_svcs_invoked:5|6|7 injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc4_msg:hello
+_from_svc4 svc1_svcs_invoked:2|3|4]  
+    log 0 @ 2016-11-30 22:05:41.042319459 -0800 PST: [service_6_status:ok]  
+RecordSpan: fault_injection[2016-11-30 22:05:41.042301035 -0800 PST, 427.249µs us] --> 0 logs. c
+ontext: {1409870975818840214 2203770827075491494 false map[injectfault:service4_delay:20 svc1_ms
+g:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_svcs_invoked:5|6|7 svc4_msg:hello_from_svc4]}; ba
+ggage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_s
+vcs_invoked:5|6|7 svc4_msg:hello_from_svc4]  
+
+RecordSpan: SERVICE_7[2016-11-30 22:05:41.042823329 -0800 PST, 3.961µs us] --> 1 logs. context: 
+{1409870975818840214 6530033742826857469 false map[svc1_svcs_invoked:2|3|4 svc4_msg:hello_from_s
+vc4 svc4_svcs_invoked:5|6|7 injectfault:service4_delay:20 svc1_msg:hello_from_svc1]}; baggage: m
+ap[svc4_svcs_invoked:5|6|7 injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invo
+ked:2|3|4 svc4_msg:hello_from_svc4]  
+    log 0 @ 2016-11-30 22:05:41.042824557 -0800 PST: [service_7_status:ok]  
+RecordSpan: fault_injection[2016-11-30 22:05:41.042814996 -0800 PST, 27.498µs us] --> 0 logs. co
+ntext: {1409870975818840214 7888780597584636696 false map[svc4_msg:hello_from_svc4 svc4_svcs_inv
+oked:5|6|7 injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]}; bag
+gage: map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_ms
+g:hello_from_svc4 svc4_svcs_invoked:5|6|7]  
+
+RecordSpan: SERVICE_4[2016-11-30 22:05:41.041669982 -0800 PST, 1.214678ms us] --> 0 logs. contex
+t: {1409870975818840214 451427308983757902 false map[svc4_svcs_invoked:5|6|7 injectfault:service
+4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_msg:hello_from_svc4]}; baggage:
+ map[injectfault:service4_delay:20 svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4 svc4_msg:hel
+lo_from_svc4 svc4_svcs_invoked:5|6|7]  
+RecordSpan: fault_injection[2016-11-30 22:05:41.021414942 -0800 PST, 21.480773ms us] --> 0 logs.
+ context: {1409870975818840214 2264875740526425281 false map[svc1_msg:hello_from_svc1 svc1_svcs_
+invoked:2|3|4 injectfault:service4_delay:20]}; baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_i
+nvoked:2|3|4 injectfault:service4_delay:20]  

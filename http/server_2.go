@@ -106,7 +106,7 @@ func service6(w http.ResponseWriter, r *http.Request) {
 	
 	
 	///Requesting service 8
-	svc9_req, _ := http.NewRequest("GET", "http://localhost:8081/svc8", nil)
+	svc9_req, _ := http.NewRequest("GET", "http://localhost:8081/svc9", nil)
 	
 	// Inject the trace information into the HTTP Headers.
 	err = sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc9_req.Header))

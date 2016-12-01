@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"io/ioutil"
+	//"io/ioutil"
 
 	"github.com/opentracing/basictracer-go"
 	"github.com/opentracing/opentracing-go"
@@ -55,14 +55,8 @@ func service1(w http.ResponseWriter, r *http.Request) {
 	err = span.Tracer().Inject(span.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc4_req.Header))
 	common.Check_inject_error(err, r)
 	
-	var response *http.Response
-	response, err = http.DefaultClient.Do(svc4_req)
+	_, err = http.DefaultClient.Do(svc4_req)
 	common.Check_request_error(err, "service_4", r)
-	
-	resp_body, _ := ioutil.ReadAll(response.Body)
-
-	//fmt.Println("\nResponse status: " + response.Status)
-	//fmt.Println("Response body: " + string(resp_body))
 	
 	fmt.Println()
 }//end service1
