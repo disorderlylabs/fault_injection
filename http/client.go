@@ -33,15 +33,23 @@ func main() {
 	//parse the commandline arguments
 	flag.Parse()
 	
+	//if a serviceName is entered, then we must be targeting it for a fault injection
 	if *serviceName != "" {
 		switch *faultType {
 			case "delay_ms":
 				time, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
 				fmt.Printf("Fault type: delay of %d ms to service %s\n", time, *serviceName)	
 			    sp.SetBaggageItem("InjectFault", (*serviceName + "_delay:" + flag.Args()[0]))
+			
+			case "http_error":
+				errCode, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
+				fmt.Printf("Injecting http error code %d into service %s\n", errCode, *serviceName)
+				sp.SetBaggageItem("InjectFault", (*serviceName + "_errcode:" + flag.Args()[0]))
+			
 			case "drop_packet":
 				fmt.Printf("Fault type: dropping packet going to service %s\n", *serviceName)	
 				sp.SetBaggageItem("InjectFault", (*serviceName + "_drop"))
+			
 			default:
 				fmt.Fprintf(os.Stderr, "error: must specify fault type for the service\n")
 				os.Exit(1)
