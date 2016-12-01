@@ -15,23 +15,23 @@ Running the example
 -------------------
 The following should be run on separate shells  
 
-## Running server1   
+### Running server1   
 $go run server_1.go  
 
-## Running server2  
+### Running server2  
 $go run server_2.go  
 
-## Running client  
-### Just tracing
+### Running client  
+#### Just tracing
 $go run client.go       
 
-### drop packet going to service3  
+#### drop packet going to service3  
 $go run client.go -serviceName=service3 -faultType=drop_packet  
 
-### inject a 500millisecond delay on request going to service 9   
+#### inject a 500millisecond delay on request going to service 9   
 $go run client.go -serviceName=service9 -faultType=delay_ms 500  
 
-### inject a 404 (not found) error for the http request going to service 5  
+#### inject a 404 (not found) error for the http request going to service 5  
 $go run client.go -serviceName=service5 -faultType=http_error 404  
 
 if there are any errors regarding missing packages, run the following then try again  
