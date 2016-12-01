@@ -15,9 +15,9 @@ import (
 	
 	"github.com/go-kit/kit/log"
 
-	"fault_injection/fi"
-	"fault_injection/dapperish"
-	grpcclient "fault_injection/grpc_client"	
+	"fault_injection/grpc/fi"
+	"fault_injection/trace_recorder/dapperish"
+	grpcclient "fault_injection/grpc/grpc_client"	
 )
 
 func main() {

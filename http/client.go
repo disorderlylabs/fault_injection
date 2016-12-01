@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"net/http"
 	"io/ioutil"
-	"fault_injection/dapperish"
+	"fault_injection/trace_recorder/dapperish"
 	"github.com/opentracing/basictracer-go"
 	"github.com/opentracing/opentracing-go"
 )

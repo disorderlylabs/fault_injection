@@ -17,9 +17,9 @@ import (
 			
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	
-	"fault_injection/fi"
-	"fault_injection/pb"
-	"fault_injection/ot_glue"
+	"fault_injection/grpc/fi"
+	"fault_injection/grpc/pb"
+	"fault_injection/grpc/ot_glue"
 )
 
 // New returns an AddService backed by a gRPC client connection. It is the

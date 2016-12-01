@@ -10,8 +10,8 @@ import (
 	"github.com/opentracing/basictracer-go"
 	"github.com/opentracing/opentracing-go"
 	otlog "github.com/opentracing/opentracing-go/log"
-	"fault_injection/dapperish"
-	"fault_injection/example/tracing_example/common"
+	"fault_injection/trace_recorder/dapperish"
+	"fault_injection/http/common"
 )
 
 

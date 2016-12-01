@@ -11,8 +11,8 @@ import (
 	"github.com/go-kit/kit/log"	
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	
-	"fault_injection/pb"
-	"fault_injection/ot_glue"
+	"fault_injection/grpc/pb"
+	"fault_injection/grpc/ot_glue"
 )
 
 // MakeGRPCServer makes a set of endpoints available as a gRPC AddServer.

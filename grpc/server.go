@@ -17,10 +17,10 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	
 		
-	"fault_injection/fi"
-	"fault_injection/pb"
-	"fault_injection/ot_glue"
-	"fault_injection/dapperish"
+	"fault_injection/grpc/fi"
+	"fault_injection/grpc/pb"
+	"fault_injection/grpc/ot_glue"
+	"fault_injection/trace_recorder/dapperish"
 )
 
 func main() {
