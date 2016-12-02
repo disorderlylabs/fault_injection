@@ -97,7 +97,7 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		}else {
 			f(w, r) 
 		}
-		sp.Finish()        
+		sp = nil //so that the temporary span does not pollute output
     }
 }
 
