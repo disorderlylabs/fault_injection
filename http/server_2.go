@@ -5,14 +5,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/opentracing/basictracer-go"
+	zipkin "github.com/openzipkin/zipkin-go-opentracing"
 	"github.com/opentracing/opentracing-go"
 	otlog "github.com/opentracing/opentracing-go/log"
-	"fault_injection/trace_recorder/dapperish"
 	"fault_injection/http/common"
+	"os"
 )
 
+const (
+	hostPort = "127.0.0.1:0"
+	collectorEndpoint = "http://localhost:10000/collect"
+	sameSpan = true
+	traceID128Bit = true
+)
 
 func service4(w http.ResponseWriter, r *http.Request) {
 	var sp opentracing.Span
@@ -170,12 +175,29 @@ func service9(w http.ResponseWriter, r *http.Request) {
 
 
 func main() {
-	
-	var tracer opentracing.Tracer
-	var port = flag.Int("port", 8081, "Example app port.")
+	collector, err := zipkin.NewHTTPCollector(collectorEndpoint)
+	if err != nil {
+		fmt.Printf("unable to create a collector: %+v", err)
+		os.Exit(-1)
+	}
 
-	tracer = basictracer.New(dapperish.NewTrivialRecorder("server_2"))
+	recorder := zipkin.NewRecorder(collector, false, hostPort, "server1")
+	// Create our tracer.
+	tracer, err := zipkin.NewTracer(
+		recorder,
+		zipkin.ClientServerSameSpan(sameSpan),
+		zipkin.TraceID128Bit(traceID128Bit),
+	)
+
+	if err != nil {
+		fmt.Printf("unable to create tracer: %+v", err)
+		os.Exit(-1)
+	}
+
+
+	var port = flag.Int("port", 8081, "Example app port.")
 	opentracing.InitGlobalTracer(tracer)
+
 
 	addr := fmt.Sprintf(":%d", *port)
 	mux := http.NewServeMux()

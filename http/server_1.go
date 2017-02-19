@@ -5,20 +5,27 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	//"io/ioutil"
-
-	"github.com/opentracing/basictracer-go"
+	zipkin "github.com/openzipkin/zipkin-go-opentracing"
 	"github.com/opentracing/opentracing-go"
 	otlog "github.com/opentracing/opentracing-go/log"
-	"fault_injection/trace_recorder/dapperish"
 	"fault_injection/http/common"
+	"os"
 )
 
 
+const (
+	hostPort = "127.0.0.1:0"
+	collectorEndpoint = "http://localhost:10000/collect"
+	sameSpan = true
+	traceID128Bit = true
+)
+
+var collector zipkin.Collector
+
+
 func service1(w http.ResponseWriter, r *http.Request) {
-	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
-		opentracing.HTTPHeadersCarrier(r.Header))
-	span := common.Check_and_start_span(err, "SERVICE_1", spCtx)	
+	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.HTTPHeadersCarrier(r.Header))
+	span := common.Check_and_start_span(err, "SERVICE_1", spCtx)
 	defer span.Finish()
 	
 	span.SetBaggageItem("svc1_msg", "hello_from_svc1")
@@ -98,12 +105,28 @@ func service3(w http.ResponseWriter, r *http.Request) {
 
 
 func main() {
-	
-	var tracer opentracing.Tracer
-	var port = flag.Int("port", 8080, "Example app port.")
+	collector, err := zipkin.NewHTTPCollector(collectorEndpoint)
+	if err != nil {
+		fmt.Printf("unable to create a collector: %+v", err)
+		os.Exit(-1)
+	}
 
-	tracer = basictracer.New(dapperish.NewTrivialRecorder("server_1"))
+	recorder := zipkin.NewRecorder(collector, false, hostPort, "server1")
+	// Create our tracer.
+	tracer, err := zipkin.NewTracer(
+		recorder,
+		zipkin.ClientServerSameSpan(sameSpan),
+		zipkin.TraceID128Bit(traceID128Bit),
+	)
+
+	if err != nil {
+		fmt.Printf("unable to create tracer: %+v", err)
+		os.Exit(-1)
+	}
+
+	var port = flag.Int("port", 8080, "Example app port.")
 	opentracing.InitGlobalTracer(tracer)
+
 
 	addr := fmt.Sprintf(":%d", *port)
 	mux := http.NewServeMux()
@@ -112,5 +135,7 @@ func main() {
 	mux.HandleFunc("/svc3", common.Handler_decorator(service3))
 	
 	fmt.Printf("Listening on port: %d\n", *port)	
-	log.Fatal(http.ListenAndServe(addr, mux))	
+	log.Fatal(http.ListenAndServe(addr, mux))
+
+
 }
