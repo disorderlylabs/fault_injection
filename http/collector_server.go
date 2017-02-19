@@ -11,7 +11,7 @@ import (
 	"github.com/openzipkin/zipkin-go-opentracing/_thrift/gen-go/zipkincore"
 	"fmt"
 	"testing"
-	"os"
+	//"os"
 )
 
 //global server to collect spans
@@ -40,6 +40,10 @@ type spanData struct {
 	Annotations []spanAnnotation
 }
 
+type trace struct {
+	Spans []spanData
+}
+
 func (s *httpServer) spans() []*zipkincore.Span {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
@@ -50,6 +54,7 @@ func dump(w http.ResponseWriter, r *http.Request) {
 	//called by client, print all spans to JSON
 	var a spanAnnotation
 	var spandata spanData
+	var t trace
 
 	//wd, err := os.Getwd()
 	//if err != nil {
@@ -58,10 +63,10 @@ func dump(w http.ResponseWriter, r *http.Request) {
 	//}
 	//fmt.Println(wd)
 
-	file, err := os.Create("JSON_Dump")
-	if err != nil {
-		panic(err)
-	}
+	//file, err := os.Create("JSON_Dump.json")
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	for _, span := range server.spans() {
 		spandata.Name = span.Name
@@ -79,15 +84,18 @@ func dump(w http.ResponseWriter, r *http.Request) {
 				spandata.Annotations = append(spandata.Annotations, a)
 			}
 		}
+		t.Spans = append(t.Spans, spandata)
 
-		JSON, _ := json.Marshal(spandata)
-		//fmt.Print(spandata)
-		file.WriteString(string(JSON))
-		file.WriteString("\n")
+
+		//file.WriteString(string(JSON))
+		//file.WriteString("\n")
 		//fmt.Println(string(JSON))
 	}
-	file.Sync()
-	file.Close()
+	JSON, _ := json.Marshal(t)
+	//fmt.Print(spandata)
+	ioutil.WriteFile("JSON_DUMP.json", JSON, 0644)
+	//file.Sync()
+	//file.Close()
 
 }
 

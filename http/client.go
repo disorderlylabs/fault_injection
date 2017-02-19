@@ -60,7 +60,6 @@ func main() {
 	//parse the commandline arguments
 	flag.Parse()
 
-
 	if *request == "fault_inject" {
 		inject_fault(*serviceName, *faultType)
 	}else if *request == "dump_trace" {
