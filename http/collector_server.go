@@ -93,7 +93,7 @@ func dump(w http.ResponseWriter, r *http.Request) {
 	}
 	JSON, _ := json.Marshal(t)
 	//fmt.Print(spandata)
-	ioutil.WriteFile("JSON_DUMP.json", JSON, 0644)
+	ioutil.WriteFile("dump.json", JSON, 0644)
 	//file.Sync()
 	//file.Close()
 
