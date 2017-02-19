@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"log"
-	"io/ioutil"
-	"net/http"
-	"sync"
+	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
 	"github.com/openzipkin/zipkin-go-opentracing/_thrift/gen-go/zipkincore"
-	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"sync"
 	"testing"
 	//"os"
 )
@@ -29,14 +29,14 @@ type httpServer struct {
 
 type spanAnnotation struct {
 	Timestamp int64
-	Value string
+	Value     string
 }
 
 type spanData struct {
-	Name string
-	Traceid int64
-	Spanid int64
-	Parentid int64
+	Name        string
+	Traceid     int64
+	Spanid      int64
+	Parentid    int64
 	Annotations []spanAnnotation
 }
 
@@ -52,8 +52,6 @@ func (s *httpServer) spans() []*zipkincore.Span {
 
 func dump(w http.ResponseWriter, r *http.Request) {
 	//called by client, print all spans to JSON
-	var a spanAnnotation
-	var spandata spanData
 	var t trace
 
 	//wd, err := os.Getwd()
@@ -69,6 +67,8 @@ func dump(w http.ResponseWriter, r *http.Request) {
 	//}
 
 	for _, span := range server.spans() {
+		var spandata spanData
+
 		spandata.Name = span.Name
 		spandata.Traceid = span.TraceID
 		spandata.Spanid = span.ID
@@ -77,15 +77,15 @@ func dump(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(span.Annotations) != 0 {
+			var a spanAnnotation
 			//var a spanAnnotation
 			for _, annotation := range span.GetAnnotations() {
 				a.Timestamp = annotation.GetTimestamp()
-				a.Value =  annotation.GetValue()
+				a.Value = annotation.GetValue()
 				spandata.Annotations = append(spandata.Annotations, a)
 			}
 		}
 		t.Spans = append(t.Spans, spandata)
-
 
 		//file.WriteString(string(JSON))
 		//file.WriteString("\n")
