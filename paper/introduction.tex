@@ -1,0 +1,14 @@
+
+%%%%%%%%%%%%%%
+%     INTRODUCTION      %
+%%%%%%%%%%%%%%
+
+\section{Introduction}
+In a world characterized by increasingly powerful and increasingly distributed applications, the cost of failure varies depending on the service provider. Violations in software correctness cost could Facebook millions in ad revenue by the hour, Amazon tens of millions by the hour if the day happens to be Black Friday, or cause an unfortunate administrator to have to wake up in the middle of the night to fix the problem \kmd{need real examples with citations}. Accordingly, the benefits of thorough testing translate into very valuable defenses protecting large quantities of revenue against the hands of fate. Companies typically invest in active testing techniques in the form of a fault injection framework to challenge the correctness guarantees of distributed services and, in the process, identify potential . However, tools like Netflix's ChaosMonkey\cite{netflix:chaosmonkey} are unlikely to find certain errors caused by a combination of failures\cite{alvaro:ldfi}, and could have an unknown effect due to the randomness of its nature, and fault injection frameworks such as Orchestra\cite{orchestra} requires application level instrumentation. 
+\\ \indent
+Ideally, we would want a system that is able to carefully target a component for particular failure, requires little work to integrate into the overall service, and be able to trace the whole system as a result of the experiment. Realizing these goals, we propose a tracing system with a fault injection component integrated within so as to provide both fine-grained fault injection and traces: Request Level Fault Injection. 
+
+
+%%%%%%%
+%    EOF     %
+%%%%%%%

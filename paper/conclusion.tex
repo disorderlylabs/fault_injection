@@ -1,0 +1,14 @@
+
+%%%%%%%%%%%%%
+%     CONCLUSION      %
+%%%%%%%%%%%%%
+
+\section{Conclusions}
+Intelligent failure testing in modern microservice architectures plays an important part in preventing rare bugs from causing headaches to developers and keeping services available to clients. Previous approaches to failure injection are either missing important combinations of failure due to the randomness involved, or require modifications to the low-level communication interface. RLFI works by propagating failure flags through \textit{baggage} annotations provided by Opentracing\cite{opentracing:doc}, and handle faults by wrapping a decorator around the wire protocol's handler function as described in section \ref{implementation}. 
+
+In addition to fault injection at the request level, RLFI is integrated with a tracing framework that will provide fine-grained traces of the underlying system both before and after the injection experiment. Through Opentracing, we can piggyback failure flags over the wire, and visually verify system response from the resulting traces. RLFI with tracing and LDFI\cite{alvaro:ldfi} allows us to complete the puzzle of debugging distributed systems.
+
+
+%%%%%%%
+%    EOF     %
+%%%%%%%
