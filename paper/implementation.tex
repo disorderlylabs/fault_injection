@@ -12,7 +12,9 @@
 
 
 \section{Implementation} \label{implementation}
-This section details the implementation choices that we have chosen to pursue to build our framework. Because we do not have a real microservice architecture to perform tests on, we built a simple service consisting of two \textbf{servers} listening on two different ports and a set of services contained in each server, the architecture of which can be seen in Figure \ref{toy_arch}. The services are coded to construct spans upon being called, and will provide detailed traces of their states. The \textbf{client} will start by invoking service1 on the first server, which will trigger the full call graph and provide the complete trace.
+\kmd{needs a revamp. what are the architectural components of RLFI specifically? What is the process of slapping RLFI over an existing microservice architecture? A diagram would be awesome.}
+\\
+A number of implementation choices influenced the construction of the RLFI framework. Because we do not have a real microservice architecture to perform tests on, we built a simple service consisting of two \textbf{servers} listening on two different ports and a set of services contained in each server, the architecture of which can be seen in Figure \ref{toy_arch}. The services are coded to construct spans upon being called, and will provide detailed traces of their states. The \textbf{client} will start by invoking service1 on the first server, which will trigger the full call graph and provide the complete trace.
 
 We chose \textbf{golang}\cite{google:golang} as our programming language because of its extensive support for the Opentracing framework and because of the strength of its \textbf{decorator} syntax. In total, the lines of code is just shy of 500 lines including the code for the servers, client, and the fault handling mechanism. The wire protocol chosen was \textbf{HTTP} in the form of REST method calls, and support provided by Golang made it very easy to integrate a decorator that wraps around all of the services. 
 
