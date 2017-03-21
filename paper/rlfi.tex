@@ -43,7 +43,7 @@
 % Standing on the Shoulders of Traces: Request Level Fault Injection
 
 \author{Tuan Tran, Peter Alvaro}
-\affil{\textit{University of California, Santa Cruz} \vspace{0.5ex} \authorcr {\tt \{//, palvaro\}@ucsc.edu}\vspace{0.0ex}}
+\affil{\textit{University of California, Santa Cruz} \vspace{0.5ex} \authorcr {\tt \{atran18, palvaro\}@ucsc.edu}\vspace{0.0ex}}
 
 \maketitle
 
@@ -51,7 +51,7 @@
 % Comment it out when you first submit the paper for review.
 
 \begin{abstract}
-Recent years manifest the growing presence of microservices as the dominating architecture for the modern landscape user-facing applications. Microservice architectures (or simply ``microservices'') are characterized as a thoroughly decentralized, distributed topology of services providers designed to coordinate in response to client requests. Accordingly, given the constant specters of asynchrony and partial failure, the occurrence of potentially devastating fault scenarios is not a question of `if' but `when'. In this paper, we present Request Level Fault Injection (RLFI) as an efficient approach to performing fault injection experiments on large-scale microservice architectures which minimizes disruptions on the critical path. We present a framework allowing developers to trigger faults on microservices at the request level and obtain fine-grained traces of the system for analysis. This work builds upon a popular tracing infrastructure known as OpenTracing\cite{opentracing:doc} to support data propagation over the wire while providing complementary traces of the system in response to fault injection experiments. We describe our motivation for the work, the benefits of adoption, a proof-of-concept implementation, and an evaluation of the framework prior to speculating about a number of future directions.
+Recent years manifest the growing presence of microservices as the dominating architecture for the modern landscape user-facing applications. Microservice architectures (or simply ``microservices'') are characterized as a thoroughly decentralized, distributed topology of services providers designed to coordinate in response to client requests. Accordingly, given the constant specters of asynchrony and partial failure, the occurrence of potentially devastating fault scenarios is not a question of `if' but `when'. In this paper, we present Request Level Fault Injection (RLFI) as an efficient approach to performing fault injection experiments on large-scale microservice architectures which minimizes disruptions on the critical path. We present a framework allowing developers to trigger faults on microservices at the request level and obtain fine-grained traces of the system for analysis. This work builds upon a popular tracing infrastructure known as OpenTracing\cite{opentracing:doc} to support data propagation over the wire while providing complementary traces of the system in response to fault injection (FI) experiments. We describe our motivation for the work, the benefits of adoption, a proof-of-concept implementation, and an evaluation of the framework prior to speculating about a number of future directions.
 \end{abstract}
 
 
@@ -67,9 +67,12 @@ Recent years manifest the growing presence of microservices as the dominating ar
 \input{relatedWork}
 \input{conclusion}
 
+% only include acknowledgements for the camera-ready version
+%\vspace{0.5cm}
+%\centerline{\textbf{Acknowledgments}}
+%We thank the team at Netflix and Lightbend for making us realize our work is very much relevant in production environments.
 
-\section{Acknowledgments}
-We would like to thank Peter Alvaro for the initial suggestion to explore Opentracing for fault injection which materialized this project and the extremely helpful feedback on both design and implementation of the framework. We also thank Nikhil Kini and Kamala Ramasubramanian for the helpful feedback provided as this project was presented and we thank Ashutosh Raina, Kathryn Dahlgren, Sarah Borland, and Asha Karim for making use of the traces for their projects. Last but not least, we thank the team at Netflix and Lightbend for making us realize that our work is very much relevant to their everyday needs in the industry setting.
+%We would like to thank Peter Alvaro for the initial suggestion to explore Opentracing for fault injection which materialized this project and the extremely helpful feedback on both design and implementation of the framework. We also thank Nikhil Kini and Kamala Ramasubramanian for the helpful feedback provided as this project was presented and we thank Ashutosh Raina, Kathryn Dahlgren, Sarah Borland, and Asha Karim for making use of the traces for their projects. Last but not least, we thank the team at Netflix and Lightbend for making us realize that our work is very much relevant to their everyday needs in the industry setting.
 
 \bibliographystyle{acm}
 \bibliography{sample}
@@ -77,8 +80,6 @@ We would like to thank Peter Alvaro for the initial suggestion to explore Opentr
 \end{document}
 
 
-
-
-
-
-
+%%%%%%%
+%     EOF     %
+%%%%%%%
