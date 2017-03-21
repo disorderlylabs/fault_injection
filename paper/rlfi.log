@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  21 MAR 2017 10:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  21 MAR 2017 11:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -284,27 +284,25 @@ Overfull \hbox (1.7745pt too wide) in paragraph at lines 15--16
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
-
-
- <./basic_trace.png>]
-
-LaTeX Warning: Citation `opentracing:doc' on page 2 undefined on input line 31.
+LaTeX Warning: Citation `opentracing:doc' on page 1 undefined on input line 31.
 
 
 
-LaTeX Warning: Citation `magpie' on page 2 undefined on input line 34.
+LaTeX Warning: Citation `magpie' on page 1 undefined on input line 34.
 
 
-LaTeX Warning: Citation `xtrace' on page 2 undefined on input line 34.
+LaTeX Warning: Citation `xtrace' on page 1 undefined on input line 34.
 
 
-LaTeX Warning: Citation `sigelman:dapper' on page 2 undefined on input line 35.
+LaTeX Warning: Citation `sigelman:dapper' on page 1 undefined on input line 35.
 
 
+[1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+
+
+]
 LaTeX Font Info:    Try loading font information for OML+ptm on input line 42.
+
 (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
@@ -315,12 +313,11 @@ LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <10> not available
 LaTeX Warning: Citation `opentracing:doc' on page 2 undefined on input line 49.
 
 
+[2 <./basic_trace.png> <./grpc_arch.png>]
 
-LaTeX Warning: Citation `google:golang' on page 2 undefined on input line 58.
+LaTeX Warning: Citation `google:golang' on page 3 undefined on input line 58.
 
-[2 <./grpc_arch.png>]
 LaTeX Font Info:    Try loading font information for OMS+ptm on input line 65.
-
 (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
@@ -351,11 +348,11 @@ Overfull \hbox (1.77855pt too wide) in paragraph at lines 8--9
  [][] 
  []
 
+[3 <./toy_architecture.pdf>]
 
-LaTeX Warning: Citation `google:golang' on page 3 undefined on input line 17.
+LaTeX Warning: Citation `google:golang' on page 4 undefined on input line 17.
 
-[3 <./toy_architecture.pdf>]) (./futureWork.tex
-<puzzle.pdf, id=33, 963.6pt x 542.025pt>
+) (./futureWork.tex <puzzle.pdf, id=33, 963.6pt x 542.025pt>
 File: puzzle.pdf Graphic file (type pdf)
  <use puzzle.pdf>
 Package pdftex.def Info: puzzle.pdf used on input line 8.
@@ -379,31 +376,29 @@ LaTeX Warning: Citation `orchestra' on page 4 undefined on input line 7.
 
 LaTeX Warning: Citation `ferrari' on page 4 undefined on input line 7.
 
+[4 <./puzzle.pdf>]
 
-LaTeX Warning: Citation `magpie' on page 4 undefined on input line 9.
-
-
-LaTeX Warning: Citation `xtrace' on page 4 undefined on input line 9.
+LaTeX Warning: Citation `magpie' on page 5 undefined on input line 9.
 
 
-LaTeX Warning: Citation `zipkin' on page 4 undefined on input line 9.
+LaTeX Warning: Citation `xtrace' on page 5 undefined on input line 9.
 
 
-LaTeX Warning: Citation `sigelman:dapper' on page 4 undefined on input line 9.
+LaTeX Warning: Citation `zipkin' on page 5 undefined on input line 9.
+
+
+LaTeX Warning: Citation `sigelman:dapper' on page 5 undefined on input line 9.
 
 ) (./conclusion.tex
 
-LaTeX Warning: Citation `opentracing:doc' on page 4 undefined on input line 7.
+LaTeX Warning: Citation `opentracing:doc' on page 5 undefined on input line 7.
 
-[4 <./puzzle.pdf>]
 
 LaTeX Warning: Citation `alvaro:ldfi' on page 5 undefined on input line 9.
 
 )
 No file rlfi.bbl.
-[5
-
-] (./rlfi.aux)
+[5] (./rlfi.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -414,11 +409,11 @@ LaTeX Warning: There were undefined references.
 Here is how much of TeX's memory you used:
  3140 strings out of 493089
  45545 string characters out of 6134842
- 125761 words of memory out of 5000000
+ 124761 words of memory out of 5000000
  6560 multiletter control sequences out of 15000+600000
  17574 words of font info for 33 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,6n,32p,1356b,1128s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,32p,1801b,1128s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/tex
@@ -427,7 +422,7 @@ ve/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texliv
 e/2015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015/tex
 mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fo
 nts/type1/urw/times/utmri8a.pfb>
-Output written on rlfi.pdf (5 pages, 307326 bytes).
+Output written on rlfi.pdf (5 pages, 308848 bytes).
 PDF statistics:
  72 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream
