@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  21 MAR 2017 11:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  21 MAR 2017 11:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -352,7 +352,8 @@ Overfull \hbox (1.77855pt too wide) in paragraph at lines 8--9
 
 LaTeX Warning: Citation `google:golang' on page 4 undefined on input line 17.
 
-) (./futureWork.tex <puzzle.pdf, id=33, 963.6pt x 542.025pt>
+) (./clade.tex) (./evaluation.tex) (./futureWork.tex
+<puzzle.pdf, id=33, 963.6pt x 542.025pt>
 File: puzzle.pdf Graphic file (type pdf)
  <use puzzle.pdf>
 Package pdftex.def Info: puzzle.pdf used on input line 8.
@@ -363,20 +364,23 @@ Overfull \hbox (1.77855pt too wide) in paragraph at lines 8--9
  []
 
 
+Underfull \vbox (badness 1297) has occurred while \output is active []
+
+
+
 LaTeX Warning: Citation `alvaro:ldfi' on page 4 undefined on input line 18.
 
-) (./relatedWork.tex
+[4 <./puzzle.pdf>]) (./relatedWork.tex
 
-LaTeX Warning: Citation `netflix:chaosmonkey' on page 4 undefined on input line
+LaTeX Warning: Citation `netflix:chaosmonkey' on page 5 undefined on input line
  7.
 
 
-LaTeX Warning: Citation `orchestra' on page 4 undefined on input line 7.
+LaTeX Warning: Citation `orchestra' on page 5 undefined on input line 7.
 
 
-LaTeX Warning: Citation `ferrari' on page 4 undefined on input line 7.
+LaTeX Warning: Citation `ferrari' on page 5 undefined on input line 7.
 
-[4 <./puzzle.pdf>]
 
 LaTeX Warning: Citation `magpie' on page 5 undefined on input line 9.
 
@@ -407,8 +411,8 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 3140 strings out of 493089
- 45545 string characters out of 6134842
+ 3146 strings out of 493089
+ 45610 string characters out of 6134842
  124761 words of memory out of 5000000
  6560 multiletter control sequences out of 15000+600000
  17574 words of font info for 33 fonts, out of 8000000 for 9000
@@ -422,7 +426,7 @@ ve/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texliv
 e/2015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015/tex
 mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fo
 nts/type1/urw/times/utmri8a.pfb>
-Output written on rlfi.pdf (5 pages, 308848 bytes).
+Output written on rlfi.pdf (5 pages, 309711 bytes).
 PDF statistics:
  72 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream
