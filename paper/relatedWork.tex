@@ -1,0 +1,13 @@
+
+%%%%%%%%%%%%%
+%     RELATED WORK    %
+%%%%%%%%%%%%%
+
+\section{Related Work}
+Previous work on fault injection such as the Netflix Simian Army\cite{netflix:chaosmonkey} provides a set of tools for inducing faults such as randomly crashing processes have been released on their webservice running on Amazon's cloud. The downside to randomly crashing nodes is the cost of restarting the nodes again, which RLFI avoids. Orchestra\cite{orchestra}, a fault injection environment developed by Scott Dawson et al. \kmd{for what purpose?} requires changes to the raw socket API, which might seem appealing to those who prefer application level instrumentation. Ferrari\cite{ferrari} is similar to RLFI with respect to the reliance on software traps triggered by events such as memory access to actually inject the faults. \kmd{need to mention gremlin}
+
+Magpie\cite{magpie} is a modeling service capable of collecting request-level traces across a distributed system. However, the approach requires applications follow a specific schema \kmd{need more detail}. X-trace\cite{xtrace} also provides fine-grained traces through an annotation propagation scheme, but the performance is greatly impacted because of the abundance in metadata recorded. Zipkin\cite{zipkin} requires application-level implementation of the client and server and contains components not useful for our aim \kmd{such as...}. Dapper\cite{sigelman:dapper} greatly resembles the Opentracing architecture, but it is internally deployed at Google. 
+
+%%%%%%%
+%    EOF     %
+%%%%%%%
