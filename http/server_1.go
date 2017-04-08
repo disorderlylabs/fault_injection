@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fault_injection/http/common"
+	"fault_injection/http/core"
 	"flag"
 	"fmt"
 	"github.com/opentracing/opentracing-go"
@@ -23,7 +23,7 @@ var collector zipkin.Collector
 
 func service1(w http.ResponseWriter, r *http.Request) {
 	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.HTTPHeadersCarrier(r.Header))
-	span := common.Check_and_start_span(err, "service-1", spCtx)
+	span := core.Check_and_start_span(err, "service-1", spCtx)
 	defer span.Finish()
 
 	span.SetBaggageItem("svc1_msg", "hello_from_svc1")
@@ -34,30 +34,30 @@ func service1(w http.ResponseWriter, r *http.Request) {
 
 	// Inject the trace information into the HTTP Headers.
 	err = span.Tracer().Inject(span.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc2_req.Header))
-	common.Check_inject_error(err, r)
+	core.Check_inject_error(err, r)
 
 	_, err = http.DefaultClient.Do(svc2_req)
-	common.Check_request_error(err, "service_2", r)
+	core.Check_request_error(err, "service_2", r)
 
 	///equesting service 3
 	svc3_req, _ := http.NewRequest("GET", "http://localhost:8080/svc3", nil)
 
 	// Inject the trace information into the HTTP Headers.
 	err = span.Tracer().Inject(span.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc3_req.Header))
-	common.Check_inject_error(err, r)
+	core.Check_inject_error(err, r)
 
 	_, err = http.DefaultClient.Do(svc3_req)
-	common.Check_request_error(err, "service_3", r)
+	core.Check_request_error(err, "service_3", r)
 
 	///Requesting service 4
 	svc4_req, _ := http.NewRequest("GET", "http://localhost:8081/svc4", nil)
 
 	// Inject the trace information into the HTTP Headers.
 	err = span.Tracer().Inject(span.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(svc4_req.Header))
-	common.Check_inject_error(err, r)
+	core.Check_inject_error(err, r)
 
 	_, err = http.DefaultClient.Do(svc4_req)
-	common.Check_request_error(err, "service_4", r)
+	core.Check_request_error(err, "service_4", r)
 
 	fmt.Println()
 } //end service1
@@ -67,7 +67,7 @@ func service2(w http.ResponseWriter, r *http.Request) {
 	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
 		opentracing.HTTPHeadersCarrier(r.Header))
 
-	sp = common.Check_and_start_span(err, "service-2", spCtx)
+	sp = core.Check_and_start_span(err, "service-2", spCtx)
 	defer sp.Finish()
 
 	sp.LogKV("hello_from", "service_2")
@@ -80,7 +80,7 @@ func service3(w http.ResponseWriter, r *http.Request) {
 	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
 		opentracing.HTTPHeadersCarrier(r.Header))
 
-	sp = common.Check_and_start_span(err, "serice-3", spCtx)
+	sp = core.Check_and_start_span(err, "serice-3", spCtx)
 	defer sp.Finish()
 
 	sp.LogKV("hello_from", "service_3")
@@ -117,9 +117,9 @@ func main() {
 
 	addr := fmt.Sprintf(":%d", *port)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/svc1", common.Handler_decorator(service1))
-	mux.HandleFunc("/svc2", common.Handler_decorator(service2))
-	mux.HandleFunc("/svc3", common.Handler_decorator(service3))
+	mux.HandleFunc("/svc1", core.Handler_decorator(service1))
+	mux.HandleFunc("/svc2", core.Handler_decorator(service2))
+	mux.HandleFunc("/svc3", core.Handler_decorator(service3))
 
 	fmt.Printf("Listening on port: %d\n", *port)
 	log.Fatal(http.ListenAndServe(addr, mux))

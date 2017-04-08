@@ -1,4 +1,4 @@
-package common
+package core
 
 import (	
 	"os"
@@ -45,8 +45,8 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		//get the name of the handler function
 		name := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 		name = strings.Split(name, ".")[1]
-		//fmt.Println("Name of function : " + name)
-		
+
+
 		//construct the span to check for faults
 		spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
 		opentracing.HTTPHeadersCarrier(r.Header))
@@ -60,10 +60,11 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 			
 			if strings.Compare(faultType, "drop") == 0 {
 				//if we requested to drop the packet, do nothing and return
+				//maybe it should sleep instead of returning immediately?
 				return
 			} else if strings.Contains(faultType, ":") {
 				//here we expect faults in the form "type:value"
-				//for example: "delay_ms:10" or "errcode:503"
+				//for example: "delay_ms:10" or "errcode:502"
 				compoundFaultType := strings.Split(faultType, ":")
 				faultType = compoundFaultType[0]
 				faultValue := compoundFaultType[1]
@@ -85,9 +86,9 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 					time.Sleep(time.Millisecond * time.Duration(value))
 						f(w, r) 
 					case "errcode":
-						//TODO: actually trigger the error instead of writing into response header only
-						fmt.Fprint(w, faultValue + http.StatusText(value))
-						return   //? or call the function anyways
+						//might need to check whether error code is valid
+						http.Error(w, http.StatusText(faultValue), faultValue)
+						return
 					default:
 						fmt.Fprintf(os.Stderr, "fault type %s is not supported\n", faultType)
 						return
@@ -95,6 +96,7 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 				
 			} 			
 		}else {
+			//if current service is not targeted, simply call the handler
 			f(w, r) 
 		}
 		sp = nil //so that the temporary span does not pollute output

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fault_injection/http/common"
+	"fault_injection/http/core"
 	"flag"
 	"fmt"
 	"github.com/opentracing/opentracing-go"
@@ -40,7 +40,7 @@ func primary(w http.ResponseWriter, r *http.Request) {
 	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
 		opentracing.HTTPHeadersCarrier(r.Header))
 
-	sp = common.Check_and_start_span(err, "primaryCache", spCtx)
+	sp = core.Check_and_start_span(err, "primaryCache", spCtx)
 	defer sp.Finish()
 
 	val := r.URL.Query().Get("value")
@@ -59,7 +59,7 @@ func secondary(w http.ResponseWriter, r *http.Request) {
 	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
 		opentracing.HTTPHeadersCarrier(r.Header))
 
-	sp = common.Check_and_start_span(err, "secondary", spCtx)
+	sp = core.Check_and_start_span(err, "secondary", spCtx)
 	defer sp.Finish()
 
 	val := r.URL.Query().Get("value")
