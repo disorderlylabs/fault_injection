@@ -23,8 +23,11 @@ var collector zipkin.Collector
 
 func service1(w http.ResponseWriter, r *http.Request) {
 	spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, opentracing.HTTPHeadersCarrier(r.Header))
-	span := core.Check_and_start_span(err, "service-1", spCtx)
+	span := core.Check_and_start_span(err, "service_1", spCtx)
 	defer span.Finish()
+
+	request := span.BaggageItem("injectfault")
+	fmt.Println("service 1, fault request: " + request)
 
 	span.SetBaggageItem("svc1_msg", "hello_from_svc1")
 	span.SetBaggageItem("svc1_svcs_invoked", "2|3|4")

@@ -42,6 +42,7 @@ func Check_and_start_span(err error, SpanName string, spCtx opentracing.SpanCont
 
 func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
+	       fmt.Println("here")
 		//get the name of the handler function
 		name := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 		name = strings.Split(name, ".")[1]
@@ -53,7 +54,10 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		sp := Check_and_start_span(err, "fault_injection", spCtx)
 		
 		//if there was a baggage item that signals a fault injection, extract it
-		faultRequest := sp.BaggageItem("injectfault") 
+		faultRequest := sp.BaggageItem("injectfault")
+	    	fmt.Println("service name: " + name + "  Fault request: " + faultRequest)
+
+
 		if (faultRequest != "" && strings.Contains(faultRequest, name)) {
 			//here, example of faultRequest would be "service4_delay:10" or "service1_drop"
 			faultType := strings.Split(faultRequest, "_")[1]
@@ -63,6 +67,8 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 				//maybe it should sleep instead of returning immediately?
 				return
 			} else if strings.Contains(faultType, ":") {
+				fmt.Println("faultType: " + faultType)
+
 				//here we expect faults in the form "type:value"
 				//for example: "delay_ms:10" or "errcode:502"
 				compoundFaultType := strings.Split(faultType, ":")
@@ -80,14 +86,15 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 						return
 					}
 				}	
-												
+
+
 				switch faultType {
 					case "delay":
 					time.Sleep(time.Millisecond * time.Duration(value))
 						f(w, r) 
 					case "errcode":
 						//might need to check whether error code is valid
-						http.Error(w, http.StatusText(faultValue), faultValue)
+						http.Error(w, http.StatusText(value), value)
 						return
 					default:
 						fmt.Fprintf(os.Stderr, "fault type %s is not supported\n", faultType)
