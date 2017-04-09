@@ -3,25 +3,33 @@ package main
 import (
 	"os"
 	"fmt"
-	"flag"
+	//"flag"
 	"strconv"
 	"net/http"
 	"github.com/opentracing/opentracing-go"
-	"github.com/opentracing/basictracer-go"
-	"fault_injection/trace_recorder/dapperish"
+	//"github.com/opentracing/basictracer-go"
 	"io/ioutil"
+	zipkin "github.com/openzipkin/zipkin-go-opentracing"
+	//"strings"
 )
 
 var(
 	sp opentracing.Span
 	tracer opentracing.Tracer
+
+)
+
+const (
+	hostPort          = "127.0.0.1:10000"
+	collectorEndpoint = "http://localhost:10000/collect"
+	sameSpan          = true
+	traceID128Bit     = true
 )
 
 
 func dump_trace() {
-	//Requesting collector server to dump spans
-	req, _ := http.NewRequest("GET", "http://localhost:10000/dump", nil)
-	_, err := http.DefaultClient.Do(req)
+	req, err := http.NewRequest("GET", "http://localhost:10000/dump", nil)
+	_, err = http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Errorf("Error requesting span dump")
 	}
@@ -29,52 +37,64 @@ func dump_trace() {
 }
 
 func main() {
-	
-	var (
-		request = flag.String("request", "", "fault_inject dump_trace")
-		serviceName = flag.String("serviceName", "", "service targeted for fault injection")
-		faultType = flag.String("faultType", "", "delay_ms, http_error")
+	collector, err := zipkin.NewHTTPCollector(collectorEndpoint)
+	if err != nil {
+		fmt.Printf("unable to create a collector: %+v", err)
+		os.Exit(-1)
+	}
+
+	recorder := zipkin.NewRecorder(collector, false, hostPort, "client")
+	// Create our tracer.
+	tracer, err := zipkin.NewTracer(
+		recorder,
+		zipkin.ClientServerSameSpan(sameSpan),
+		zipkin.TraceID128Bit(traceID128Bit),
 	)
 
-	//parse the commandline arguments
-	flag.Parse()
+	if err != nil {
+		fmt.Printf("unable to create tracer: %+v", err)
+		os.Exit(-1)
+	}
+	opentracing.InitGlobalTracer(tracer)
 
 
-	if *request == "fault_inject" {
-		//inject_fault(*serviceName, *faultType)
-		tracer = basictracer.New(dapperish.NewTrivialRecorder("fi"))
-		opentracing.InitGlobalTracer(tracer)
+	sp = opentracing.StartSpan("test_client")
+	defer sp.Finish()
+
+	request := "fault_inject"
+	//request := "dump_trace"
+	serviceName := "service4"
+	faultType := "delay_ms"
+	faultVal := "10"
 
 
-		sp = opentracing.StartSpan("test_client")
-		defer sp.Finish()
-
-		if *serviceName != "" {
-			switch *faultType {
+	if request == "fault_inject" {
+		if serviceName != "" {
+			switch faultType {
 				case "delay_ms":
-					time, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
-					fmt.Printf("Fault type: delay of %d ms to service %s\n", time, *serviceName)
-					sp.SetBaggageItem("injectfault", (*serviceName + "_delay:" + flag.Args()[0]))
+					time, _ := strconv.ParseInt(faultVal, 10, 64)
+					fmt.Printf("Fault type: delay of %d ms to service %s\n", time, serviceName)
+					sp.SetBaggageItem("injectfault", (serviceName + "_delay:" + faultVal))
+
 				case "http_error":
-					errCode, _ := strconv.ParseInt(flag.Args()[0], 10, 64)
-					fmt.Printf("Injecting http error code %d into service %s\n", errCode, *serviceName)
-					sp.SetBaggageItem("injectfault", (*serviceName + "_errcode:" + flag.Args()[0]))
+					errcode, _ := strconv.ParseInt(faultVal, 10, 64)
+					fmt.Printf("Injecting http error code %d into service %s\n", errcode, serviceName)
+					sp.SetBaggageItem("injectfault", (serviceName + "_errcode:" + faultVal))
+
 				default:
 					fmt.Fprintf(os.Stderr, "error: must specify fault type for the service\n")
-				os.Exit(1)
-
+					os.Exit(1)
 			}
+
+
 		}
 
-		fmt.Println("request: " + *request + " serviceName: " + *serviceName + " faultType: " + *faultType)
-
-		req, _ := http.NewRequest("GET", "http://localhost:8080/svc1", nil)
+		req, _ := http.NewRequest("GET", "http://localhost:8080/service1", nil)
 
 		err := sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(req.Header))
 		if err != nil {
 			fmt.Printf("failed to inject")
 		}
-		fmt.Println(sp.BaggageItem("injectfault"))
 
 		response, err := http.DefaultClient.Do(req)
 		if err != nil {
@@ -85,8 +105,11 @@ func main() {
 		fmt.Println(response.Status)
 		fmt.Println(string(resp_body))
 
-	}else if *request == "dump_trace" {
+
+	}else if request == "dump_trace" {
 		dump_trace()
 	}
+
+
 	
 }

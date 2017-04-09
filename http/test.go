@@ -2,98 +2,111 @@ package main
 
 import (
 	"net/http"
-	zipkin "github.com/openzipkin/zipkin-go-opentracing"
-	"time"
-	"github.com/openzipkin/zipkin-go-opentracing/_thrift/gen-go/zipkincore"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
+	zipkin "github.com/openzipkin/zipkin-go-opentracing"
+	//"temp_fi/core"
+	"strconv"
+	"os"
+	"io/ioutil"
 )
 
-func makeNewSpan(hostPort, serviceName, methodName string, traceID, spanID, parentSpanID int64, debug bool) *zipkincore.Span {
-	timestamp := time.Now().UnixNano() / 1e3
-	return &zipkincore.Span{
-		TraceID:   traceID,
-		Name:      methodName,
-		ID:        spanID,
-		ParentID:  &parentSpanID,
-		Debug:     debug,
-		Timestamp: &timestamp,
-	}
-}
+const (
+	hostPort          = "127.0.0.1:10000"
+	collectorEndpoint = "http://localhost:10000/collect"
+	sameSpan          = true
+	traceID128Bit     = true
+)
 
-// annotate annotates the span with the given value.
-func annotate(span *zipkincore.Span, timestamp time.Time, host *zipkincore.Endpoint) {
-	if timestamp.IsZero() {
-		timestamp = time.Now()
-	}
-	span.Annotations = append(span.Annotations, &zipkincore.Annotation{
-		Timestamp: timestamp.UnixNano() / 1e3,
-		Host:      host,
-	})
-}
-
-
-
-func TestHttpCollector() {
-	//server := newHTTPServer()
-	c, err := zipkin.NewHTTPCollector("http://localhost:10000/dump")
+func testDump() {
+	req, err := http.NewRequest("GET", "http://localhost:10000/dump", nil)
+	_, err = http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Print("error\n")
-		fmt.Print(err)
+		fmt.Errorf("Error requesting span dump")
 	}
-
-	var (
-		serviceName  = "service"
-		methodName   = "method"
-		traceID      = int64(123)
-		spanID       = int64(456)
-		parentSpanID = int64(0)
-	)
-
-	span := makeNewSpan("1.2.3.4:1234", serviceName, methodName, traceID, spanID, parentSpanID, true)
-	annotate(span, time.Now(), nil)
-	fmt.Println("Collecting span")
-	if err := c.Collect(span); err != nil {
-		fmt.Printf("error during collection: %v", err)
-	}
-	 //Need to yield to the select loop to accept the send request, and then
-	 //yield again to the send operation to write to the socket. I think the
-	 //best way to do that is just give it some time.
-
-	//deadline := time.Now().Add(2 * time.Second)
-	//for {
-	//	if time.Now().After(deadline) {
-	//		fmt.Printf("never received a span")
-	//	}
-	//	if want, have := 1, len(server.spans()); want != have {
-	//		time.Sleep(time.Millisecond)
-	//		continue
-	//	}
-	//	break
-	//}
-	//
-	//gotSpan := server.spans()[0]
-	//fmt.Println(gotSpan.GetName())
-	//fmt.Println(gotSpan.TraceID)
-	//fmt.Println(gotSpan.ID)
-	//fmt.Println(*gotSpan.ParentID)
-	//fmt.Println(gotSpan.GetAnnotations())
-
 }
 
-func test() {
-	svc, _ := http.NewRequest("GET", "http://localhost:10000/collect", nil)
-	_, err := http.DefaultClient.Do(svc)
-	if err != nil {
-		fmt.Println("error")
+
+func testInject(serviceName string, faultType string, faultVal string, sp opentracing.Span) opentracing.Span{
+	switch faultType {
+	case "delay_ms":
+		time, _ := strconv.ParseInt(faultVal, 10, 64)
+		fmt.Printf("Fault type: delay of %d ms to service %s\n", time, serviceName)
+		sp.SetBaggageItem("injectfault", (serviceName + "_delay:" + faultVal))
+
+	case "http_error":
+		errcode, _ := strconv.ParseInt(faultVal, 10, 64)
+		fmt.Printf("Injecting http error code %d into service %s\n", errcode, serviceName)
+		sp.SetBaggageItem("injectfault", (serviceName + "_errcode:" + faultVal))
+
+	default:
+		fmt.Fprintf(os.Stderr, "error: must specify fault type for the service\n")
+		os.Exit(1)
 	}
 
-
+	return sp
 }
+
 
 
 
 func main() {
-	TestHttpCollector()
-	test()
+	collector, err := zipkin.NewHTTPCollector(collectorEndpoint)
+	if err != nil {
+		fmt.Printf("unable to create a collector: %+v", err)
+		os.Exit(-1)
+	}
+
+	recorder := zipkin.NewRecorder(collector, false, hostPort, "test")
+	// Create our tracer.
+	tracer, err := zipkin.NewTracer(
+		recorder,
+		zipkin.ClientServerSameSpan(sameSpan),
+		zipkin.TraceID128Bit(traceID128Bit),
+	)
+
+	if err != nil {
+		fmt.Printf("unable to create tracer: %+v", err)
+		os.Exit(-1)
+	}
+	opentracing.InitGlobalTracer(tracer)
+
+
+	sp := opentracing.StartSpan("Test")
+	req, _ := http.NewRequest("GET", "http://localhost:8080/service1", nil)
+
+
+
+	//TEST: inject 100ms delay on service4
+	//sp = testInject("service4", "delay_ms", "100", sp)
+
+	//TEST: inject internal server error
+	//sp = testInject("service4", "http_error", "500", sp)
+
+
+
+	err = sp.Tracer().Inject(sp.Context(), opentracing.TextMap, opentracing.HTTPHeadersCarrier(req.Header))
+	if err != nil {
+		fmt.Printf("failed to inject")
+	}
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Errorf("Request error")
+	}
+	resp_body, _ := ioutil.ReadAll(response.Body)
+
+	fmt.Println(response.Status)
+	fmt.Println(string(resp_body))
+
+
+
+	//*Uncomment to dump traces to JSON file
+	testDump()
+
 
 }
+
+
+
+

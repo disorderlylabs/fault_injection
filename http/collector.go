@@ -54,19 +54,13 @@ func dump(w http.ResponseWriter, r *http.Request) {
 	//called by client, print all spans to JSON
 	var t trace
 
-	//wd, err := os.Getwd()
-	//if err != nil {
-	//	fmt.Println(err)
-	//	os.Exit(1)
-	//}
-	//fmt.Println(wd)
-
 	//file, err := os.Create("JSON_Dump.json")
 	//if err != nil {
 	//	panic(err)
 	//}
 
 	for _, span := range server.spans() {
+		fmt.Println(span)
 		var spandata spanData
 
 		spandata.Name = span.Name
@@ -85,6 +79,7 @@ func dump(w http.ResponseWriter, r *http.Request) {
 				spandata.Annotations = append(spandata.Annotations, a)
 			}
 		}
+		fmt.Print(spandata)
 		t.Spans = append(t.Spans, spandata)
 
 		//file.WriteString(string(JSON))
@@ -92,7 +87,7 @@ func dump(w http.ResponseWriter, r *http.Request) {
 		//fmt.Println(string(JSON))
 	}
 	JSON, _ := json.Marshal(t)
-	//fmt.Print(spandata)
+	//
 	ioutil.WriteFile("dump.json", JSON, 0644)
 	//file.Sync()
 	//file.Close()

@@ -11,25 +11,32 @@ import (
 	"strconv"
 	"runtime"
 	"github.com/opentracing/opentracing-go"
+	//zipkin "github.com/openzipkin/zipkin-go-opentracing"
+)
+
+const (
+	hostPort          = "127.0.0.1:10000"
+	collectorEndpoint = "http://localhost:10000/collect"
+	sameSpan          = true
+	traceID128Bit     = true
 )
 
 
-
-func Check_inject_error(err error, r *http.Request) {
+func CheckInjectError(err error, r *http.Request) {
 	if err != nil {
 		log.Fatalf("%s: Couldn't inject headers (%v)", r.URL.Path, err)
 	}
 }
 
 
-func Check_request_error(err error, ServiceName string, r *http.Request) {
+func CheckRequestError(err error, ServiceName string, r *http.Request) {
 	if err != nil {
 		log.Printf("%s: %s call failed (%v)", r.URL.Path, ServiceName, err)
 	}
 }
 
 
-func Check_and_start_span(err error, SpanName string, spCtx opentracing.SpanContext) opentracing.Span {
+func CheckAndStartSpan(err error, SpanName string, spCtx opentracing.SpanContext) opentracing.Span {
 	var sp opentracing.Span
 	if err == nil {
 		sp = opentracing.StartSpan(SpanName, opentracing.ChildOf(spCtx))
@@ -40,9 +47,10 @@ func Check_and_start_span(err error, SpanName string, spCtx opentracing.SpanCont
 }
 
 
-func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
+
+func HandlerDecorator(f http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-	       fmt.Println("here")
+	       //fmt.Println("inside decorator")
 		//get the name of the handler function
 		name := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 		name = strings.Split(name, ".")[1]
@@ -51,11 +59,11 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 		//construct the span to check for faults
 		spCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap,
 		opentracing.HTTPHeadersCarrier(r.Header))
-		sp := Check_and_start_span(err, "fault_injection", spCtx)
+		sp := CheckAndStartSpan(err, "fault_injection", spCtx)
 		
 		//if there was a baggage item that signals a fault injection, extract it
 		faultRequest := sp.BaggageItem("injectfault")
-	    	fmt.Println("service name: " + name + "  Fault request: " + faultRequest)
+	    	//fmt.Println("service name: " + name + "  Fault request: " + faultRequest)
 
 
 		if (faultRequest != "" && strings.Contains(faultRequest, name)) {
@@ -67,7 +75,7 @@ func Handler_decorator(f http.HandlerFunc) http.HandlerFunc {
 				//maybe it should sleep instead of returning immediately?
 				return
 			} else if strings.Contains(faultType, ":") {
-				fmt.Println("faultType: " + faultType)
+				//fmt.Println("faultType: " + faultType)
 
 				//here we expect faults in the form "type:value"
 				//for example: "delay_ms:10" or "errcode:502"
