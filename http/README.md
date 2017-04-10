@@ -70,9 +70,9 @@ baggage: this is what's been passed from a parent span to a child
 "baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]"  
 
 
-# The python decorator
+### The python decorator
 
-## Usage:
+#### Usage:
 
      from core import rlfi_decorator
      
