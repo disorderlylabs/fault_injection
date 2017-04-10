@@ -70,4 +70,15 @@ baggage: this is what's been passed from a parent span to a child
 "baggage: map[svc1_msg:hello_from_svc1 svc1_svcs_invoked:2|3|4]"  
 
 
+# The python decorator
 
+## Usage:
+
+     from core import rlfi_decorator
+     
+     app = Flask(__name__)
+     @app.route('/')
+     @rlfi_decorator.rlfi("service1")
+     def index():
+       return "Hello, World!"
+    
