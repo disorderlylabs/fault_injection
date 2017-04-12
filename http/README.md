@@ -81,4 +81,9 @@ baggage: this is what's been passed from a parent span to a child
      @rlfi_decorator.rlfi("service1")
      def index():
        return "Hello, World!"
+       
+#### Discussion
+
+The idea behind the decorator is that we write it once per language (or at the most, once per framework per language).  Then an otherwise unmodified application can merely decorate its headers to benefit from RLFI fault injection.  Because annotations will be added to requests when they first arrive at the API, each service's decorator will need to determine if it is a target for fault injection.  By convention, we associate each service with a unique *service name*.  When invoking the decorator, you must parameterize it with the service name (in this case "service1").
+       
     
