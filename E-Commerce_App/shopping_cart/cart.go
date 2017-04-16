@@ -30,6 +30,7 @@ func main() {
 
 //creates a shopping cart and returns the cartID
 func create(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("cart create")
 	//only accept POST requests
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
