@@ -24,6 +24,7 @@ public class application {
 
 
         appServer.createContext("/app/browse", new RequestHandler.BrowseHandler());
+        appServer.createContext("/app/createCart", new RequestHandler.CartCreate());
         appServer.createContext("/app/addToCart", new RequestHandler.CartAdd());
         appServer.createContext("/app/deleteFromCart", new RequestHandler.CartDelete());
         appServer.createContext("/app/checkout", new RequestHandler.Checkout());
