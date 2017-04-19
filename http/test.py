@@ -32,6 +32,13 @@ def index():
     return "Hello, World!"
 
 
+# trying to repro issue reported by Kamala
+@app.route('/foo')
+@rlfi_decorator.rlfi("service2")
+def index2():
+    return "Hello, Squirrel"
+
+
 
 ## test cases
 class MyTest(unittest.TestCase):
