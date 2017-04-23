@@ -19,23 +19,29 @@ public class microservice {
 
     static class Catalog extends service{
         String get;
+        String batchGet;
         String add;
+        String items;
         String update;
         String delete;
 
         public Catalog() {
-            super("localhost", 8000);  //catalog listening on port 8000
+            super("localhost", 8008);  //catalog listening on port 8000
 
             get = baseURL + "/catalog/get";
             add = baseURL + "/catalog/add";
+            items = baseURL + "/catalog/items";
             update = baseURL + "/catalog/update";
             delete = baseURL + "/catalog/delete";
+            batchGet = baseURL + "/catalog/batchGet";
         }
 
         public String get() { return get; }
         public String add() { return add; }
+        public String items() { return items; }
         public String update() { return update; }
         public String delete() { return delete; }
+        public String batchGet() { return batchGet; }
     }
 
 
@@ -50,7 +56,7 @@ public class microservice {
         String items;
 
         public Cart() {
-            super("localhost", 1339);
+            super("localhost", 8008);
 
             create = baseURL + "/cart/create";
             add = baseURL + "/cart/add";
@@ -73,7 +79,7 @@ public class microservice {
         String summary;
 
         public OrderManagement() {
-            super("localhost", 8002);
+            super("localhost", 8008);
 
             create = baseURL + "/orders/create";
             shipping = baseURL + "/orders/shipping";
