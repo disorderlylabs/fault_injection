@@ -13,9 +13,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +27,7 @@ public class RequestHandler {
     static microservice.OrderManagement orderManagement = new microservice.OrderManagement();
     static HttpClient client = HttpClientBuilder.create().build();
     static Map<String, Object> parameters = new HashMap<String, Object>();
+    static String charset = "UTF-8";
 
     public static void parseQuery(String query, Map<String,
             Object> parameters) throws UnsupportedEncodingException {
@@ -304,6 +303,8 @@ public class RequestHandler {
             OutputStream os = t.getResponseBody();
             StringBuffer req = new StringBuffer();
             BufferedReader br;
+            URLConnection connection;
+            int responseCode = 200;
             parameters.clear();
 
 
@@ -315,46 +316,100 @@ public class RequestHandler {
 
 
                 String cartID = parameters.get("cartID").toString();
+                String userID = parameters.get("userID").toString();
 
                 if(cartID == null) {
                     response = "Could not parse cartID\n";
-                    t.sendResponseHeaders(400, response.length());
-                }else {
-                    //get items from the cart
-                    URLConnection connection = new URL(catalog.items()).openConnection();
+                    //t.sendResponseHeaders(400, response.length());
+                    responseCode = 400;
+                    writeResponse(t, response, responseCode);
+                }else if(userID == null) {
+                    response = "Could not parse userID\n";
+                    responseCode = 400;
+                    writeResponse(t, response, responseCode);
+                } else {
+                    //1)get items from the cart
+                    //connection.set
+                    connection = new URL(cart.items() + "?cartID=" + cartID).openConnection();
                     connection.setRequestProperty("Accept-Charset", "UTF-8");
 
                     br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     response = br.readLine();
                     if(response == null) {
-                        response = "Error reading response from catalog:get\n";
-                        t.sendResponseHeaders(400, response.length());
+                        response = "Error reading response from cart:get\n";
+                        //t.sendResponseHeaders(400, response.length());
+                        writeResponse(t, response, 400);
                     }
-                    System.out.println("Response: " + response);
+                    System.out.println("cart items: " + response);
+                    String itemIDs = response;
+
+                    //2)now that we have the list of items in the cart, do a batch get from catalog
+                    connection = new URL(catalog.batchGet() + "?items=" + itemIDs).openConnection();
+                    connection.setRequestProperty("Accept-Charset", "UTF-8");
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    response = br.readLine();
+                    if(response == null) {
+                        response = "Error reading response from catalog:batchget\n";
+                        //t.sendResponseHeaders(400, response.length());
+                        responseCode = 400;
+                        writeResponse(t, response, responseCode);
+                    }
+
+                    String items = response;
+                    System.out.println("items: " + items);
+
+                    //3) create orderID, passing items in the cart
+                    HttpURLConnection httpConnection = (HttpURLConnection) new URL(orderManagement.create()).openConnection();
+                    httpConnection.setRequestMethod("POST");
+
+                    query = String.format("userID=%s&items=%s",
+                            URLEncoder.encode(userID, charset),
+                            URLEncoder.encode(items, charset));
+//                    connection = new URL(orderManagement.create()).openConnection();
+                    httpConnection.setDoOutput(true);
+                    httpConnection.setRequestProperty("Accept-Charset", "UTF-8");
+                    httpConnection.setRequestProperty(
+                            "Content-Type", "application/x-www-form-urlencoded" );
+                    try (OutputStream output = httpConnection.getOutputStream()) {
+                        output.write(query.getBytes(charset));
+                    }
+
+                    br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+                    response = br.readLine();
+                    if(response == null) {
+                        response = "Error reading response from orders:create\n";
+                        //t.sendResponseHeaders(400, response.length());
+                        responseCode = 400;
+                        writeResponse(t, response, responseCode);
+                    }
 
 
+                    //4)delete the cart
+                    query = String.format("cartID=%s", URLEncoder.encode(cartID, charset));
+                    connection = new URL(cart.delete()).openConnection();
+                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
+                    try (OutputStream output = connection.getOutputStream()) {
+                        output.write(query.getBytes(charset));
+                    }
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    response = br.readLine();
+                    if(response == null) {
+                        response = "Error reading response from cart:delete\n";
+                        //t.sendResponseHeaders(400, response.length());
+                        responseCode = 400;
+                        writeResponse(t, response, responseCode);
 
-
+                    }else{
+                        System.out.println("response: " + response);
+                        writeResponse(t, response, 200);
+                    }
                 }
-
-
             }else{
                 response = "Only POST requests\n";
-                t.sendResponseHeaders(405, response.length());
+                //t.sendResponseHeaders(405, response.length());
+                writeResponse(t, response, 405);
             }
-
-
-
-            //call to get shipping information
-            //call to get payment information
-            //create orderID, passing items in the cart
-            //delete the cart
-            //respond to user with orderID
-
-
-            t.sendResponseHeaders(200, response.length());
-            os.write(response.getBytes());
-            os.close();
+            t.sendResponseHeaders(responseCode, response.length());
         }
 
     }

@@ -225,11 +225,19 @@ func cartItems(w http.ResponseWriter, r *http.Request) {
 func ordersCreate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("ordersCreate")
 
+	if r.Method != "POST" {
+		fmt.Println("not POST request")
+		w.Header().Set("Allow", "POST")
+		http.Error(w, http.StatusText(405), 405)
+		return
+	}
+
 	formItems := r.PostFormValue("items")
 	if formItems == "" {
 		http.Error(w, "could not parse formItems", 400)
 		return
 	}
+	fmt.Println("Form items: " + formItems)
 
 	items := strings.Split(formItems, ",")
 
