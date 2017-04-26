@@ -20,10 +20,11 @@ func main() {
 
 	fmt.Printf("Listening on port: %d\n", location)
 
-	http.HandleFunc("/cart/add", add)
-	http.HandleFunc("/cart/delete", delete)
+	http.HandleFunc("/cart/addItem", addItem)
+	http.HandleFunc("/cart/deleteItem", deleteItem)
 	http.HandleFunc("/cart/items", getItems)
 	http.HandleFunc("/cart/create", create)
+	http.HandleFunc("/cart/deleteCart", deleteItem)
 	http.ListenAndServe("localhost:"+ strconv.Itoa(location), nil)
 }
 
@@ -58,7 +59,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 
 
 //adds an item to a cart
-func add(w http.ResponseWriter, r *http.Request) {
+func addItem(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
 		http.Error(w, http.StatusText(405), 405)
@@ -87,7 +88,7 @@ func add(w http.ResponseWriter, r *http.Request) {
 
 
 //deletes an item from a cart
-func delete(w http.ResponseWriter, r *http.Request) {
+func deleteItem(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "DELETE" {
 		w.Header().Set("Allow", "DELETE")
 		http.Error(w, http.StatusText(405), 405)

@@ -203,7 +203,7 @@ public class RequestHandler {
                     response = "Could not parse cartID\n";
                     t.sendResponseHeaders(400, response.length());
                 }else{
-                    String url = cart.add();
+                    String url = cart.addItem();
                     HttpPost postReq = new HttpPost(url);
 
 
@@ -263,7 +263,7 @@ public class RequestHandler {
                     response = "Could not parse cartID\n";
                     t.sendResponseHeaders(400, response.length());
                 }else{
-                    String url = cart.delete();
+                    String url = cart.deleteItem();
                     HttpDelete deleteReq = new HttpDelete(url);
 
                     deleteReq.addHeader("itemID", itemID);
@@ -359,8 +359,9 @@ public class RequestHandler {
                     System.out.println("items: " + items);
 
                     //3) create orderID, passing items in the cart
-                    String request        = "http://localhost:8008/orders/create";
-                    URL    url            = new URL( request );
+                    //System.out.println("ORDERMANAGEMENT: " + orderManagement.create());
+                    String request = orderManagement.create();
+                    URL url = new URL( request );
                     HttpURLConnection httpConnection= (HttpURLConnection) url.openConnection();
                     query = String.format("userID=%s&items=%s",userID ,items);
 
@@ -387,34 +388,48 @@ public class RequestHandler {
                         responseCode = 400;
                         writeResponse(t, response, responseCode);
                     }
+                    String orderID  = response;
+                    System.out.println("OrderID: " + orderID);
 
 
                     //4)delete the cart
-                    query = String.format("cartID=%s", URLEncoder.encode(cartID, charset));
-                    connection = new URL(cart.delete()).openConnection();
-                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
-                    try (OutputStream output = connection.getOutputStream()) {
-                        output.write(query.getBytes(charset));
-                    }
-                    br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    response = br.readLine();
-                    if(response == null) {
-                        response = "Error reading response from cart:delete\n";
-                        //t.sendResponseHeaders(400, response.length());
-                        responseCode = 400;
-                        writeResponse(t, response, responseCode);
+                    request = cart.deleteCart();
+                    url = new URL( request );
+                    httpConnection= (HttpURLConnection) url.openConnection();
+                    query = String.format("cartID=%s",cartID);
 
-                    }else{
-                        System.out.println("response: " + response);
-                        writeResponse(t, response, 200);
+                    httpConnection.setDoOutput(true);
+                    httpConnection.setInstanceFollowRedirects( false );
+                    httpConnection.setRequestMethod( "POST" );
+                    httpConnection.setRequestProperty( "charset", "utf-8");
+                    httpConnection.setRequestProperty(
+                            "Content-Type", "application/x-www-form-urlencoded" );
+                    httpConnection.setRequestProperty( "Content-Length", Integer.toString( query.length() ));
+                    httpConnection.setUseCaches( false );
+                    try( DataOutputStream wr = new DataOutputStream( httpConnection.getOutputStream())) {
+                        wr.write(query.getBytes());
                     }
+
+                    responseCode = httpConnection.getResponseCode();
+                    System.out.println("Response Code : " + responseCode);
+
+
+                    if(responseCode != 200) {
+                        response = "Error reading response from cart:delete\n";
+                    }else{
+                        response = orderID;
+                    }
+
                 }
             }else{
                 response = "Only POST requests\n";
                 //t.sendResponseHeaders(405, response.length());
                 writeResponse(t, response, 405);
             }
+            System.out.println("END, response code: " + responseCode);
             t.sendResponseHeaders(responseCode, response.length());
+            os.write(response.getBytes());
+            os.close();
         }
 
     }

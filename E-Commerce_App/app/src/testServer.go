@@ -41,8 +41,9 @@ func main() {
 	http.HandleFunc("/catalog/get", catalogGet)
 	http.HandleFunc("/catalog/batchGet", catalogBatchGet)
 
-	http.HandleFunc("/cart/add", cartAdd)
-	http.HandleFunc("/cart/delete", cartDelete)
+	http.HandleFunc("/cart/addItem", cartAddItem)
+	http.HandleFunc("/cart/deleteItem", cartDeleteItem)
+	http.HandleFunc("/cart/deleteCart", cartDeleteCart)
 	http.HandleFunc("/cart/create", cartCreate)
 	http.HandleFunc("/cart/items", cartItems)
 
@@ -170,7 +171,7 @@ func cartCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func cartAdd(w http.ResponseWriter, r *http.Request) {
+func cartAddItem(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("cart add")
 
 	cartID := r.PostFormValue("cartID")
@@ -190,21 +191,34 @@ func cartAdd(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func cartDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("cart delete")
+func cartDeleteItem(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("cart delete item")
 
-	cartID := r.URL.Query().Get("cartID")
+	cartID := r.PostFormValue("cartID")
 	if cartID == "" {
 		http.Error(w, "could not parse cartID", 400)
 		return
 	}
 
-	itemID := r.URL.Query().Get("itemID")
+	itemID := r.PostFormValue("itemID")
 	if itemID == "" {
 		http.Error(w, "could not parse itemID", 400)
 		return
 	}
 	fmt.Println("cartID: " + cartID + "  itemID: " + itemID)
+}
+
+func cartDeleteCart(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("cart delete Cart")
+
+	cartID := r.PostFormValue("cartID")
+	if cartID == "" {
+		http.Error(w, "could not parse cartID", 400)
+		return
+	}
+
+
+	fmt.Println("cartID: " + cartID)
 }
 
 func cartItems(w http.ResponseWriter, r *http.Request) {

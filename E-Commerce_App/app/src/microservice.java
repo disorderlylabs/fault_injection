@@ -11,7 +11,7 @@ public class microservice {
         public service(String a, int p) {
             addr = a;
             portNum = p;
-            baseURL = "http://" + addr + ":" + portNum + "/";
+            baseURL = "http://" + addr + ":" + portNum + "";
         }
 
     }
@@ -51,22 +51,25 @@ public class microservice {
     static class Cart extends service {
         //endpoints for the different functions
         String create;
-        String add;
-        String delete;
+        String addItem;
+        String deleteItem;
+        String deleteCart;
         String items;
 
         public Cart() {
             super("localhost", 8008);
 
             create = baseURL + "/cart/create";
-            add = baseURL + "/cart/add";
-            delete = baseURL + "/cart/delete";
+            addItem = baseURL + "/cart/addItem";
+            deleteItem = baseURL + "/cart/deleteItem";
+            deleteCart = baseURL + "/cart/deleteCart";
             items = baseURL + "/cart/items";
         }
 
         public String create() {return create; }
-        public String add() { return add; }
-        public String delete() { return delete; }
+        public String addItem() { return addItem; }
+        public String deleteItem() { return deleteItem; }
+        public String deleteCart() { return deleteCart; }
         public String items() { return items; }
     }
 
