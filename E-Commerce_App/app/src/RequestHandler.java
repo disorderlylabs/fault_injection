@@ -487,12 +487,45 @@ public class RequestHandler {
     static class OrderStatus implements HttpHandler {
         public void handle(HttpExchange t) throws IOException {
             System.out.println("Checking Order status");
-            String response = "Checking Order status\n";
+            String response = "This should not be printed\n";
+
+
+            if(t.getRequestMethod().equalsIgnoreCase("DELETE")) {
+                String query = t.getRequestURI().getQuery();
+                parseQuery(query, parameters);
+                String orderID = parameters.get("orderID").toString();
+
+                if(orderID == null) {
+                    response = "Could not parse itemID\n";
+                    t.sendResponseHeaders(400, response.length());
+                }else{
+                    //we have parsed the itemID, now ask the catalog for the information
+                    //for now let's just retrieve the title and price from catalog
+
+                    HttpGet request = new HttpGet(orderManagement.summary());
+                    HttpResponse res = client.execute(request);
+                    System.out.println("Response Code : "
+                            + res.getStatusLine().getStatusCode());
+
+                    BufferedReader rd = new BufferedReader(
+                            new InputStreamReader(res.getEntity().getContent()));
+
+                    response = rd.readLine();
+                    if(response == null) {
+                        response = "Error reading response from orders:summary\n";
+                        t.sendResponseHeaders(400, response.length());
+                    }
+
+                }
+            }else{
+                response = "Only GET requests\n";
+                t.sendResponseHeaders(405, response.length());
+            }
+
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
             os.close();
-
             //given orderid, call /orders/summary
         }
     }
