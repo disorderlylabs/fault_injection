@@ -23,6 +23,7 @@ public class application {
         HttpServer appServer = HttpServer.create(new InetSocketAddress(socket), 0);
 
 
+        appServer.createContext("/app/test", new RequestHandler.TestHandler());
         appServer.createContext("/app/browse", new RequestHandler.BrowseHandler());
         appServer.createContext("/app/createCart", new RequestHandler.CartCreate());
         appServer.createContext("/app/addToCart", new RequestHandler.CartAdd());

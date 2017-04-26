@@ -225,12 +225,15 @@ func cartItems(w http.ResponseWriter, r *http.Request) {
 func ordersCreate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("ordersCreate")
 
+	fmt.Println(r.Method)
 	if r.Method != "POST" {
 		fmt.Println("not POST request")
 		w.Header().Set("Allow", "POST")
 		http.Error(w, http.StatusText(405), 405)
 		return
 	}
+
+
 
 	formItems := r.PostFormValue("items")
 	if formItems == "" {

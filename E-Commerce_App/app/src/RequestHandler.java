@@ -359,20 +359,25 @@ public class RequestHandler {
                     System.out.println("items: " + items);
 
                     //3) create orderID, passing items in the cart
-                    HttpURLConnection httpConnection = (HttpURLConnection) new URL(orderManagement.create()).openConnection();
-                    httpConnection.setRequestMethod("POST");
+                    String request        = "http://localhost:8008/orders/create";
+                    URL    url            = new URL( request );
+                    HttpURLConnection httpConnection= (HttpURLConnection) url.openConnection();
+                    query = String.format("userID=%s&items=%s",userID ,items);
 
-                    query = String.format("userID=%s&items=%s",
-                            URLEncoder.encode(userID, charset),
-                            URLEncoder.encode(items, charset));
-//                    connection = new URL(orderManagement.create()).openConnection();
                     httpConnection.setDoOutput(true);
-                    httpConnection.setRequestProperty("Accept-Charset", "UTF-8");
+                    httpConnection.setInstanceFollowRedirects( false );
+                    httpConnection.setRequestMethod( "POST" );
+                    httpConnection.setRequestProperty( "charset", "utf-8");
                     httpConnection.setRequestProperty(
                             "Content-Type", "application/x-www-form-urlencoded" );
-                    try (OutputStream output = httpConnection.getOutputStream()) {
-                        output.write(query.getBytes(charset));
+                    httpConnection.setRequestProperty( "Content-Length", Integer.toString( query.length() ));
+                    httpConnection.setUseCaches( false );
+                    try( DataOutputStream wr = new DataOutputStream( httpConnection.getOutputStream())) {
+                        wr.write(query.getBytes());
                     }
+
+                    responseCode = httpConnection.getResponseCode();
+                    System.out.println("Response Code : " + responseCode);
 
                     br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
                     response = br.readLine();
@@ -412,6 +417,53 @@ public class RequestHandler {
             t.sendResponseHeaders(responseCode, response.length());
         }
 
+    }
+
+    static class TestHandler implements HttpHandler {
+        public void handle(HttpExchange t) throws IOException {
+            System.out.println("Checking Order status");
+            String response = "Checking Order status\n";
+            BufferedReader br;
+
+            String urlParameters  = "param1=a&param2=b&param3=c";
+            byte[] postData       = urlParameters.getBytes( charset );
+            int    postDataLength = postData.length;
+            String request        = "http://localhost:8008/orders/create";
+            URL    url            = new URL( request );
+            HttpURLConnection conn= (HttpURLConnection) url.openConnection();
+            conn.setDoOutput( true );
+            conn.setInstanceFollowRedirects( false );
+            conn.setRequestMethod( "POST" );
+            conn.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty( "charset", "utf-8");
+            conn.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+            conn.setUseCaches( false );
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.writeBytes(urlParameters);
+            wr.flush();
+            wr.close();
+
+            System.out.println("here");
+            int responseCode = conn.getResponseCode();
+            System.out.println("Response Code : " + responseCode);
+
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            response = br.readLine();
+            System.out.println("--here");
+            br.close();
+            System.out.println("response: " + response);
+
+
+
+
+            t.sendResponseHeaders(200, response.length());
+            OutputStream os = t.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+
+
+            //given orderid, call /orders/summary
+        }
     }
 
 
