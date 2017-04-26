@@ -3,8 +3,7 @@ from flask import Flask, jsonify, abort, make_response, request
 import sqlite3
 import sys
 sys.path.insert(0, '../../http/core')
-
-#import rlfi_decorator
+import rlfi_decorator
 
 app = Flask(__name__)
 
@@ -34,6 +33,7 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 @app.route('/catalog/get/<int:item_id>', methods=['GET'])
+@rlfi_decorator.rlfi("get_items")
 def get_items(item_id):
     conn = sqlite3.connect('items.db')
     c = conn.cursor()
@@ -46,6 +46,7 @@ def get_items(item_id):
     conn.close()
 
 @app.route('/catalog/add', methods=['POST'])
+@rlfi_decorator.rlfi("add_items")
 def add_items():
     conn = sqlite3.connect('items.db')
     c=conn.cursor()
@@ -61,6 +62,7 @@ def add_items():
     return result, 201
 
 @app.route('/catalog/delete/<int:item_id>', methods=['DELETE'])
+@rlfi_decorator.rlfi("delete_items")
 def delete_items(item_id):
     conn = sqlite3.connect('items.db')
     c = conn.cursor()
@@ -75,6 +77,7 @@ def delete_items(item_id):
     return jsonify({'Result':True})
 
 @app.route('/catalog/update/<int:item_id>', methods=['PUT'])
+@rlfi_decorator.rlfi("update_items")
 def update_items(item_id):
     conn = sqlite3.connect('items.db')
     c = conn.cursor()
@@ -84,23 +87,17 @@ def update_items(item_id):
     if not request.json:
        abort(400)
 
-    if "title" in request.json and type(request.json['title'])!= unicode:
+    if "title" in request.json:
         abort(400)
     else:
         flag = 1
         cmd += "title=\"" + request.json['title'] + "\" "
 
     if "group_id" in request.json:
-        if flag:
-           cmd +=", "
-        flag = 1
-        cmd += "group_id=" + str(request.json['group_id']) + " "
+        abort(400)
 
     if "seller_id" in request.json:
-        if flag:
-           cmd +=", "
-        flag = 1
-        cmd += "seller_id=" + str(request.json['seller_id']) + " "
+        abort(400)
 
     if "price" in request.json:
         if flag:
@@ -109,10 +106,7 @@ def update_items(item_id):
         cmd += "price=" + str(request.json['price']) + " "
 
     if "shipping_cost" in request.json:
-        if flag:
-           cmd +=", "
-        flag = 1
-        cmd += "shipping_cost=" + str(request.json['shipping_cost']) + " "
+        abort(400)
 
     cmd += "where id=" + str(item_id)
     c.execute(cmd)
