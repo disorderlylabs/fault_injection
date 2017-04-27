@@ -468,7 +468,7 @@ public class RequestHandler {
             String response = "This should not be printed\n";
             int returnCode = INTERNAL_ERR;
 
-            if (t.getRequestMethod().equalsIgnoreCase("POST")) {
+            if (t.getRequestMethod().equalsIgnoreCase("GET")) {
                 String query = t.getRequestURI().getQuery();
                 parseQuery(query, parameters);
                 String orderID = parameters.get("orderID").toString();
@@ -501,7 +501,7 @@ public class RequestHandler {
                     }
                 }
             } else {
-                response = "Only POST requests\n";
+                response = "Only GET requests\n";
                 returnCode = METHOD_NOT_ALLOWED;
             }
 
