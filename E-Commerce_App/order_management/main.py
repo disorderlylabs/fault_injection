@@ -16,21 +16,22 @@ signal.signal(signal.SIGALRM, handler)
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'test.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'DB.db')
 db = SQLAlchemy(app)
 
 class Users(db.Model):
-    UserID = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
+    shipinfo = db.Column(db.String(80))
+    payinfo = db.Column(db.String(80)) 
 
 class Orders(db.Model):
-    OrderID = db.Column(db.Integer, primary_key=True)
-    UserID = db.Column(db.Integer, db.ForeignKey(Users.UserID))
-    shipinfo = db.Column(db.String(80))
-    paytype = db.Column(db.String(80))    
+    orderID = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, db.ForeignKey(Users.userID))   
+    items = db.Column(db.String(80))
 
-    users = db.relationship('Users', foreign_keys='Orders.UserID')
+    users = db.relationship('Users', foreign_keys='Orders.userID')
 
 db.create_all()
 
@@ -43,13 +44,13 @@ def home():
 def shipping():
     if request.method == 'GET':
         try:
-            userid = request.args.get('userid')
-            orders = Orders.query.filter_by(UserID=userid).all()
+            userid = request.args.get('userID')
+            users = Users.query.filter_by(userID=userid).all()
             ans = []
-            for order in orders:
+            for user in users:
                 d = {}
                 d['userid'] = userid
-                d['shipinfo'] = order.shipinfo
+                d['shipinfo'] = user.shipinfo
                 ans.append(d)
             return Response(json.dumps(ans),  mimetype='application/json'), 200              
         except Exception,e:
@@ -60,13 +61,13 @@ def shipping():
 def payment():
     if request.method == 'GET':
         try:
-            userid = request.args.get('userid')
-            orders = Orders.query.filter_by(UserID=userid).all()
+            userid = request.args.get('userID')
+            users = Users.query.filter_by(userID=userid).all()
             ans = []
-            for order in orders:
+            for user in users:
                 d = {}
                 d['userid'] = userid
-                d['paytype'] = order.paytype
+                d['payinfo'] = user.payinfo
                 ans.append(d)
             return Response(json.dumps(ans),  mimetype='application/json'), 200              
         except Exception,e:
@@ -77,14 +78,15 @@ def payment():
 def summary():
     if request.method == 'GET':
         try:
-            userid = request.args.get('userid')
-            orders = Orders.query.filter_by(UserID=userid).all()
-            ans = []
-            for order in orders:
-                d = {}
-                d['userid'] = userid
-                d['summary'] = "The shipping details are '" + order.shipinfo + "' and payment was done by '" + order.paytype + "'"
-                ans.append(d)
+            orderid = request.args.get('orderID')
+            order = Orders.query.filter_by(orderID=orderid).first()
+            if order == None:
+                return 'Order ID does not exist!',404 
+            user = Users.query.filter_by(userID=order.userID).first()
+            d = {}
+            d['order'] = orderid 
+            d['summary'] = str(user.userID) + ":" + user.shipinfo + ":" + user.payinfo
+            return jsonify(d), 200
             return Response(json.dumps(ans),  mimetype='application/json'), 200              
         except Exception,e:
             return str(e), 404                 
@@ -94,15 +96,32 @@ def summary():
 def create():
     if request.method == 'POST':
         try:
-            ship = request.form.get('shipinfo') 
-            pay = request.form.get('paytype')
             userid = request.form.get('userid')
-            order = Orders(shipinfo=ship, paytype=pay, UserID=userid)
+            items = request.form.get('items')
+            order = Orders(items=items, userID=userid)
             db.session.add(order)
             db.session.commit()
-            return jsonify ({'msg' : 'success'}), 200         
+            order = Orders.query.filter_by(items=items, userID=userid).first()
+            return jsonify ({'message':'success','orderID' : order.orderID}), 200         
         except Exception,e:
             return str(e), 404
+
+@app.route("/orders/addUser", methods=['POST'])
+@rlfi_decorator.rlfi("addUser")
+def addUser():
+    if request.method == 'POST':
+        try:
+            firstname = request.form.get('firstname') 
+            lastname = request.form.get('lastname')
+            ship = request.form.get('shipinfo') 
+            pay = request.form.get('payinfo')            
+            order = Users(firstname=firstname, lastname=lastname, shipinfo=ship, payinfo=pay)
+            db.session.add(order)
+            db.session.commit()
+            user = Users.query.filter_by(firstname=firstname, lastname=lastname, shipinfo=ship, payinfo=pay).first()
+            return jsonify ({'message':'success','userID' : user.userID}), 200         
+        except Exception,e:
+            return str(e), 404            
     
 if __name__ == "__main__":
     app.run(debug=True)
